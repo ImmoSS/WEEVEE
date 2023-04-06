@@ -7799,9 +7799,10 @@ int CvPlot::calculateImprovementYieldChange(ImprovementTypes eImprovement, Yield
 				// if (GC.getGame().GetGameReligions()->GetBeliefInPantheon(pWorkingCity->getOwner()) == (BeliefTypes)GC.getInfoTypeForString("BELIEF_EARTH_MOTHER", true))
 				if (pBelief == (BeliefTypes)GC.getInfoTypeForString("BELIEF_EARTH_MOTHER", true))
 				{
-					if(getResourceType(GET_PLAYER(ePlayer).getTeam()) != NO_RESOURCE)
+					if(getResourceType(GET_PLAYER(ePlayer).getTeam()) != NO_RESOURCE || eImprovement != (ImprovementTypes)GC.getInfoTypeForString("IMPROVEMENT_MINE"))
 					{
 						iReligionChange += pReligion->m_Beliefs.GetImprovementYieldChange(eImprovement, eYield);
+						// ImprovementTypes eLandmark = (ImprovementTypes)GC.getInfoTypeForString("IMPROVEMENT_MINE");
 					}
 				}
 				else

@@ -248,6 +248,10 @@ public:
 
 	unsigned int getInitialTime();
 	void setInitialTime(unsigned int uiNewValue);
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	float getTimeElapsed();
+	void setTimeElapsed(float fNewValue);
+#endif
 
 	bool isScoreDirty() const;
 	void setScoreDirty(bool bNewValue);
@@ -605,6 +609,9 @@ public:
 	FTimer  m_timeSinceGameTurnStart;		//time since game turn started for human players
 	float	m_fCurrentTurnTimerPauseDelta;
 #endif
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	bool m_bIsPaused;
+#endif
 
 	bool AnyoneHasBuildingClass(BuildingClassTypes iBuildingClassType) const;
 
@@ -656,6 +663,9 @@ protected:
 	int m_iMapScoreMod;
 
 	unsigned int m_uiInitialTime;
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	float m_fTimeElapsed;
+#endif
 
 	bool m_bScoreDirty;
 	bool m_bCircumnavigated;

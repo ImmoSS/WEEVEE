@@ -897,4 +897,8 @@
 #define NET_FIX_SINGLE_USE_ABILITY_DUPE
 /// Fixes already corrupted saves leading to turn skip in simultaneous mode.
 #define AUTOSAVE_FIX_PREVENT_TURN_SKIP
+///
+#define TURN_TIMER_RESET_BUTTON
+///
+#define TURN_TIMER_PAUSE_BUTTON
 #endif

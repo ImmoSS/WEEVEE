@@ -93,6 +93,9 @@ CvGame::CvGame() :
 	, m_timeSinceGameTurnStart()
 #endif
 	, m_fCurrentTurnTimerPauseDelta(0.f)
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	, m_bIsPaused(false)
+#endif
 	, m_sentAutoMoves(false)
 	, m_bForceEndingTurn(false)
 	, m_pDiploResponseQuery(NULL)
@@ -1088,6 +1091,9 @@ void CvGame::uninit()
 	m_iMapScoreMod = 0;
 
 	m_uiInitialTime = 0;
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	m_fTimeElapsed = 0.0f;
+#endif
 
 	m_bScoreDirty = false;
 	m_bCircumnavigated = false;
@@ -2056,7 +2062,11 @@ bool CvGame::hasTurnTimerExpired(PlayerTypes playerID)
 	if(isOption(GAMEOPTION_END_TURN_TIMER_ENABLED) && !isPaused() && GC.getGame().getGameState() == GAMESTATE_ON)
 	{
 		ICvUserInterface2* iface = GC.GetEngineUserInterface();
+#ifdef TURN_TIMER_PAUSE_BUTTON
+		if(getElapsedGameTurns() > 0 && !GC.getGame().m_bIsPaused)
+#else
 		if(getElapsedGameTurns() > 0)
+#endif
 		{
 #ifdef NQM_GAME_FIX_TURN_TIMER_RESET_ON_AUTOMATION
 			if (isLocalPlayer && ((!gDLL->allAICivsProcessedThisTurn() && allUnitAIProcessed()) || (isOption("GAMEOPTION_AUTOMATION_RESETS_TIMER") && !allUnitAIProcessed())))
@@ -2099,7 +2109,12 @@ bool CvGame::hasTurnTimerExpired(PlayerTypes playerID)
 #elif defined(AUI_GAME_BETTER_HYBRID_MODE)
 				float timeElapsed = timeSinceCurrentTurnStart;
 #else
+#ifdef TURN_TIMER_PAUSE_BUTTON
+				setTimeElapsed((curPlayer.isSimultaneousTurns() ? timeSinceGameTurnStart : timeSinceCurrentTurnStart));
+				float timeElapsed = getTimeElapsed();
+#else
 				float timeElapsed = (curPlayer.isSimultaneousTurns() ? timeSinceGameTurnStart : timeSinceCurrentTurnStart);
+#endif
 #endif
 				if(curPlayer.isTurnActive())
 				{//The timer is ticking for our turn
@@ -2171,6 +2186,24 @@ bool CvGame::hasTurnTimerExpired(PlayerTypes playerID)
 				}
 			}
 		}
+#ifdef TURN_TIMER_PAUSE_BUTTON
+		else if(getElapsedGameTurns() > 0 && GC.getGame().m_bIsPaused)
+		{
+			if(!(isLocalPlayer && (!gDLL->allAICivsProcessedThisTurn() || !allUnitAIProcessed())))
+			{
+				
+				// Has the turn expired?
+				
+				float timeElapsed = getTimeElapsed();
+
+				if(isLocalPlayer)
+				{//update the local end turn timer.
+					CvPreGame::setEndTurnTimerLength(gameTurnEnd);
+					iface->updateEndTurnTimer(timeElapsed / gameTurnEnd);
+				}
+			}
+		}
+#endif
 		else if(isLocalPlayer){
 			//hold the turn timer at 0 seconds with 0% completion
 			CvPreGame::setEndTurnTimerLength(0.0f);
@@ -3758,10 +3791,38 @@ void CvGame::doControl(ControlTypes eControl)
 		GC.GetEngineUserInterface()->toggleResourceVisibleMode();
 		break;
 
-	case CONTROL_UNIT_ICONS:
+	case CONTROL_UNIT_ICONS: 
+#ifdef TURN_TIMER_RESET_BUTTON
+	{
+		if(isOption(GAMEOPTION_END_TURN_TIMER_ENABLED) && !isPaused() && GC.getGame().getGameState() == GAMESTATE_ON)
+		{
+			if ((getElapsedGameTurns() > 0) && GET_PLAYER(getActivePlayer()).isTurnActive())
+			{
+				// as there is no netcode for timer reset,
+				// this function will act as one, if called with special agreed upon arguments
+				resetTurnTimer(true);
+				gDLL->sendGiftUnit(NO_PLAYER, -1);
+			}
+		}
+	}
+#endif
 		break;
 
 	case CONTROL_SCORES:
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	{
+		if(isOption(GAMEOPTION_END_TURN_TIMER_ENABLED) && !isPaused() && GC.getGame().getGameState() == GAMESTATE_ON)
+		{
+			if ((getElapsedGameTurns() > 0) && GET_PLAYER(getActivePlayer()).isTurnActive())
+			{
+				// as there is no netcode for timer pause,
+				// this function will act as one, if called with special agreed upon arguments
+				// resetTurnTimer(true);
+				gDLL->sendGiftUnit(NO_PLAYER, -7);
+			}
+		}
+	}
+#endif
 		break;
 
 	case CONTROL_LOAD_GAME:
@@ -4924,6 +4985,9 @@ void CvGame::resetTurnTimer(bool resetGameTurnStart)
 		m_timeSinceGameTurnStart.Start();
 	}
 #endif
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	m_bIsPaused = false;
+#endif
 }
 
 #ifndef AUI_GAME_PLAYER_BASED_TURN_LENGTH
@@ -5389,6 +5453,22 @@ void CvGame::setInitialTime(unsigned int uiNewValue)
 }
 
 
+#ifdef TURN_TIMER_PAUSE_BUTTON
+//	--------------------------------------------------------------------------------
+float CvGame::getTimeElapsed()
+{
+	return m_fTimeElapsed;
+}
+
+
+//	--------------------------------------------------------------------------------
+void CvGame::setTimeElapsed(float fNewValue)
+{
+	m_fTimeElapsed = fNewValue;
+}
+
+
+#endif
 //	--------------------------------------------------------------------------------
 bool CvGame::isScoreDirty() const
 {
@@ -8006,6 +8086,9 @@ void CvGame::doTurn()
 
 	// END OF TURN
 
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	GC.getGame().m_bIsPaused = false;
+#endif
 	//We reset the turn timer now so that we know that the turn timer has been reset at least once for
 	//this turn.  CvGameController::Update() will continue to reset the timer if there is prolonged ai processing.
 	resetTurnTimer(true);
@@ -10183,6 +10266,10 @@ void CvGame::Read(FDataStream& kStream)
 	kStream >> m_iMapScoreMod;
 
 	// m_uiInitialTime not saved
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	kStream >> m_fTimeElapsed;
+	kStream >> m_bIsPaused;
+#endif
 
 	kStream >> m_bScoreDirty;
 	kStream >> m_bCircumnavigated;
@@ -10426,6 +10513,10 @@ void CvGame::Write(FDataStream& kStream) const
 	kStream << m_iMapScoreMod;
 
 	// m_uiInitialTime not saved
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	kStream << m_fTimeElapsed;
+	kStream << m_bIsPaused;
+#endif
 
 	kStream << m_bScoreDirty;
 	kStream << m_bCircumnavigated;

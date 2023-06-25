@@ -4740,6 +4740,9 @@ bool CvUnit::canAirPatrol(const CvPlot* pPlot) const
 	{
 		float fGameTurnEnd = static_cast<float>(kGame.getMaxTurnLen());
 
+#ifdef TURN_TIMER_PAUSE_BUTTON
+		float fTimeElapsed = kGame.getTimeElapsed();
+#else
 		//NOTE:  These times exclude the time used for AI processing.
 		//Time since the current player's turn started.  Used for measuring time for players in sequential turn mode.
 		float fTimeSinceCurrentTurnStart = kGame.m_curTurnTimer.Peek() + kGame.m_fCurrentTurnTimerPauseDelta;
@@ -4748,6 +4751,7 @@ bool CvUnit::canAirPatrol(const CvPlot* pPlot) const
 		float fTimeSinceGameTurnStart = kGame.m_timeSinceGameTurnStart.Peek() + kGame.m_fCurrentTurnTimerPauseDelta;
 
 		float fTimeElapsed = (GET_PLAYER(kGame.getActivePlayer()).isSimultaneousTurns() ? fTimeSinceGameTurnStart : fTimeSinceCurrentTurnStart);
+#endif
 
 		if (fTimeElapsed * 2 > fGameTurnEnd)
 		{
@@ -6430,6 +6434,9 @@ bool CvUnit::canParadropAt(const CvPlot* pPlot, int iX, int iY) const
 	{
 		float fGameTurnEnd = static_cast<float>(kGame.getMaxTurnLen());
 
+#ifdef TURN_TIMER_PAUSE_BUTTON
+		float fTimeElapsed = kGame.getTimeElapsed();
+#else
 		//NOTE:  These times exclude the time used for AI processing.
 		//Time since the current player's turn started.  Used for measuring time for players in sequential turn mode.
 		float fTimeSinceCurrentTurnStart = kGame.m_curTurnTimer.Peek() + kGame.m_fCurrentTurnTimerPauseDelta;
@@ -6438,6 +6445,7 @@ bool CvUnit::canParadropAt(const CvPlot* pPlot, int iX, int iY) const
 		float fTimeSinceGameTurnStart = kGame.m_timeSinceGameTurnStart.Peek() + kGame.m_fCurrentTurnTimerPauseDelta;
 
 		float fTimeElapsed = (GET_PLAYER(kGame.getActivePlayer()).isSimultaneousTurns() ? fTimeSinceGameTurnStart : fTimeSinceCurrentTurnStart);
+#endif
 
 		if (fTimeElapsed * 2 > fGameTurnEnd && !pTargetPlot->IsFriendlyTerritory(getOwner()))
 		{

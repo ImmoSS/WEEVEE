@@ -702,8 +702,62 @@ void CvDllNetMessageHandler::ResponseChangeIdeology(PlayerTypes ePlayer)
 //------------------------------------------------------------------------------
 void CvDllNetMessageHandler::ResponseGiftUnit(PlayerTypes ePlayer, PlayerTypes eMinor, int iUnitID)
 {
-	CvUnit* pkUnit = GET_PLAYER(ePlayer).getUnit(iUnitID);
-	GET_PLAYER(eMinor).DoDistanceGift(ePlayer, pkUnit);
+#ifdef TURN_TIMER_RESET_BUTTON
+	// here we intercept response, when UnitID equals -1 we agree to reset timer
+	if (iUnitID == -1) {
+		GC.getGame().resetTurnTimer(true);
+		DLLUI->AddMessage(0, CvPreGame::activePlayer(), true, GC.getEVENT_MESSAGE_TIME(), GetLocalizedText("TXT_KEY_MISC_TURN_TIMER_RESET", GET_PLAYER(ePlayer).getName()).GetCString());
+		ICvEngineScriptSystem1* pkScriptSystem = gDLL->GetScriptSystem();
+		CvLuaArgsHandle args;
+		bool bResult;
+		if (pkScriptSystem)
+		{
+			args->Push(GC.getGame().m_bIsPaused);
+			LuaSupport::CallHook(pkScriptSystem, "EndTurnTimerReset", args.get(), bResult);
+		}
+	}
+	else
+#endif
+#ifdef TURN_TIMER_PAUSE_BUTTON
+	if (iUnitID == -7) {
+		if(GC.getGame().isOption(GAMEOPTION_END_TURN_TIMER_ENABLED))
+		{
+			if(!GC.getGame().m_bIsPaused)
+			{
+				GC.getGame().m_fCurrentTurnTimerPauseDelta += GC.getGame().m_curTurnTimer.Stop();
+				GC.getGame().m_timeSinceGameTurnStart.Stop();
+				GC.getGame().m_bIsPaused = true;
+				DLLUI->AddMessage(0, CvPreGame::activePlayer(), true, GC.getEVENT_MESSAGE_TIME(), GetLocalizedText("TXT_KEY_MISC_TURN_TIMER_PAUSE", GET_PLAYER(ePlayer).getName()).GetCString());
+			}
+			else
+			{
+				GC.getGame().resetTurnTimer(true);
+				GC.getGame().m_timeSinceGameTurnStart.StartWithOffset(GC.getGame().getTimeElapsed());
+				GC.getGame().m_curTurnTimer.StartWithOffset(GC.getGame().getTimeElapsed());
+				GC.getGame().m_bIsPaused = false;
+				DLLUI->AddMessage(0, CvPreGame::activePlayer(), true, GC.getEVENT_MESSAGE_TIME(), GetLocalizedText("TXT_KEY_MISC_TURN_TIMER_UNPAUSE", GET_PLAYER(ePlayer).getName()).GetCString());
+			}
+			ICvEngineScriptSystem1* pkScriptSystem = gDLL->GetScriptSystem();
+			CvLuaArgsHandle args;
+			bool bResult;
+			if (pkScriptSystem)
+			{
+				args->Push(GC.getGame().m_bIsPaused);
+				LuaSupport::CallHook(pkScriptSystem, "EndTurnTimerPause", args.get(), bResult);
+			}
+		}
+	}
+	else
+#endif
+#if defined(TURN_TIMER_RESET_BUTTON) || defined(TURN_TIMER_PAUSE_BUTTON)
+	{
+#endif
+		CvUnit* pkUnit = GET_PLAYER(ePlayer).getUnit(iUnitID);
+		GET_PLAYER(eMinor).DoDistanceGift(ePlayer, pkUnit);
+
+#if defined(TURN_TIMER_RESET_BUTTON) || defined(TURN_TIMER_PAUSE_BUTTON)
+	}
+#endif
 }
 //------------------------------------------------------------------------------
 void CvDllNetMessageHandler::ResponseLaunchSpaceship(PlayerTypes ePlayer, VictoryTypes eVictory)

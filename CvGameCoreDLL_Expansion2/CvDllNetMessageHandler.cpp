@@ -882,7 +882,16 @@ void CvDllNetMessageHandler::ResponseGreatPersonChoice(PlayerTypes ePlayer, Unit
 {
 	CvPlayerAI& kPlayer = GET_PLAYER(ePlayer);
 	CvCity* pCity = kPlayer.GetGreatPersonSpawnCity(eGreatPersonUnit);
+#ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
+	if (pCity && (kPlayer.GetNumFreeGreatPeople() <= 0))
+	{
+		SLOG("[%s:%d]: GetNumFreeGreatPeople is non-positive: %d", __FUNCTION__, __LINE__, kPlayer.GetNumFreeGreatPeople());
+	}
+
+	if (pCity && (kPlayer.GetNumFreeGreatPeople() > 0))
+#else
 	if(pCity)
+#endif
 	{
 		// GJS NQMP - changed 2nd parameter to false so that "free" Great People from liberty finisher & buildings are actually free
 		pCity->GetCityCitizens()->DoSpawnGreatPerson(eGreatPersonUnit, false, false);
@@ -894,7 +903,16 @@ void CvDllNetMessageHandler::ResponseMayaBonusChoice(PlayerTypes ePlayer, UnitTy
 {
 	CvPlayerAI& kPlayer = GET_PLAYER(ePlayer);
 	CvCity* pCity = kPlayer.GetGreatPersonSpawnCity(eGreatPersonUnit);
+#ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
+	if (pCity && (kPlayer.GetNumMayaBoosts() <= 0))
+	{
+		SLOG("[%s:%d]: GetNumMayaBoosts is non-positive: %d", __FUNCTION__, __LINE__, kPlayer.GetNumMayaBoosts());
+	}
+
+	if (pCity && (kPlayer.GetNumMayaBoosts() > 0))
+#else
 	if(pCity)
+#endif
 	{
 		pCity->GetCityCitizens()->DoSpawnGreatPerson(eGreatPersonUnit, true, false);
 	}

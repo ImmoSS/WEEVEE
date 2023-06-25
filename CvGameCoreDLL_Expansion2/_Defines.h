@@ -893,4 +893,6 @@
 #define WLKTD_STARTS_IF_NO_VALID_RESOURCES_TO_DEMAND
 /// Planes will take damage and Guided Missiles will dissapear when war is declaring by Air Strike
 #define FIX_AIR_STRIKE_WHEN_DECLARING_WAR
+/// Adds missing sanity checks; prevents unit/resource duping inside laggy game tick
+#define NET_FIX_SINGLE_USE_ABILITY_DUPE
 #endif

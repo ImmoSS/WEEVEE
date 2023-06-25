@@ -9814,6 +9814,13 @@ int CvUnit::GetGoldenAgeTurns() const
 bool CvUnit::canGivePolicies(const CvPlot* /*pPlot*/, bool /*bTestVisible*/) const
 {
 	VALIDATE_OBJECT
+#ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
+	if (isDelayedDeath())
+	{
+		SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
+		return false;
+	}
+#endif
 	if(!isGivesPolicies() && getUnitInfo().GetBaseCultureTurnsToCount() == 0)
 	{
 		return false;
@@ -9907,6 +9914,13 @@ bool CvUnit::givePolicies()
 bool CvUnit::canBlastTourism(const CvPlot* pPlot, bool bTestVisible) const
 {
 	VALIDATE_OBJECT
+#ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
+	if (isDelayedDeath())
+	{
+		SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
+		return false;
+	}
+#endif
 	if(!isBlastTourism())
 	{
 		return false;
@@ -10619,6 +10633,13 @@ bool CvUnit::isReadyForUpgrade() const
 {
 	VALIDATE_OBJECT
 
+#ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
+	if (isDelayedDeath())
+	{
+		SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
+		return false;
+	}
+#endif
 	if(m_iMoves <= 0)
 	{
 		return false;

@@ -887,4 +887,6 @@
 #define WEEVEE_EARTH_MOTHER_NERF
 
 #define REMOVE_PARADROP_ANIMATION
+/// Removing some civilans animations for better UI expirience
+#define REMOVE_GAMEPLAY_UNIT_ACTIVATE_ANIMATION
 #endif

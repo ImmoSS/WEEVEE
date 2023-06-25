@@ -17980,6 +17980,15 @@ void CvPlayer::setTurnActiveForPbem(bool bActive)
 //	--------------------------------------------------------------------------------
 void CvPlayer::setTurnActive(bool bNewValue, bool bDoTurn)
 {
+#ifdef GAME_ALLOW_ONLY_ONE_UNIT_MOVE_ON_TURN_LOADING
+	float t1;
+	float t2;
+	GC.getGame().GetTurnTimerData(t1, t2);
+	if (isHuman() && isAlive())
+	{
+		//SLOG("%f %f setTurnActive player: %d bNewValue: %d bDoTurn: %d", t1, t2, GetID(), bNewValue ? 1 : 0, bDoTurn ? 1 : 0);
+	}
+#endif
 	if(isTurnActive() != bNewValue)
 	{
 		m_bTurnActive = bNewValue;

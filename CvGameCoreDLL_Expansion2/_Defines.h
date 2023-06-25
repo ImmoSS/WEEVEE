@@ -901,4 +901,6 @@
 #define TURN_TIMER_RESET_BUTTON
 ///
 #define TURN_TIMER_PAUSE_BUTTON
+/// Prevent timer mid-turn fluctuations - update it once per turn
+#define GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
 #endif

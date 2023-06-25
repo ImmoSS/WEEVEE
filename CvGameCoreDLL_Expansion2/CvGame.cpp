@@ -1091,6 +1091,9 @@ void CvGame::uninit()
 	m_iMapScoreMod = 0;
 
 	m_uiInitialTime = 0;
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+	m_fPreviousTurnLen = 0.0f;
+#endif
 #ifdef TURN_TIMER_PAUSE_BUTTON
 	m_fTimeElapsed = 0.0f;
 #endif
@@ -2095,7 +2098,11 @@ bool CvGame::hasTurnTimerExpired(PlayerTypes playerID)
 
 				float fGameTurnEnd = static_cast<float>(*piCurMaxTurnLength);
 #else
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+				float gameTurnEnd = getPreviousTurnLen();
+#else
 				float gameTurnEnd = static_cast<float>(getMaxTurnLen());
+#endif
 
 				//NOTE:  These times exclude the time used for AI processing.
 				//Time since the current player's turn started.  Used for measuring time for players in sequential turn mode.
@@ -2193,6 +2200,11 @@ bool CvGame::hasTurnTimerExpired(PlayerTypes playerID)
 			{
 				
 				// Has the turn expired?
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+				float gameTurnEnd = getPreviousTurnLen();
+#else
+				float gameTurnEnd = static_cast<float>(getMaxTurnLen());
+#endif
 				
 				float timeElapsed = getTimeElapsed();
 
@@ -5453,6 +5465,22 @@ void CvGame::setInitialTime(unsigned int uiNewValue)
 }
 
 
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+//	--------------------------------------------------------------------------------
+float CvGame::getPreviousTurnLen()
+{
+	return m_fPreviousTurnLen;
+}
+
+
+//	--------------------------------------------------------------------------------
+void CvGame::setPreviousTurnLen(float fNewValue)
+{
+	m_fPreviousTurnLen = fNewValue;
+}
+
+
+#endif
 #ifdef TURN_TIMER_PAUSE_BUTTON
 //	--------------------------------------------------------------------------------
 float CvGame::getTimeElapsed()
@@ -8086,6 +8114,9 @@ void CvGame::doTurn()
 
 	// END OF TURN
 
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+	setPreviousTurnLen(static_cast<float>(getMaxTurnLen()));
+#endif
 #ifdef TURN_TIMER_PAUSE_BUTTON
 	GC.getGame().m_bIsPaused = false;
 #endif
@@ -10266,6 +10297,9 @@ void CvGame::Read(FDataStream& kStream)
 	kStream >> m_iMapScoreMod;
 
 	// m_uiInitialTime not saved
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+	kStream >> m_fPreviousTurnLen;
+#endif
 #ifdef TURN_TIMER_PAUSE_BUTTON
 	kStream >> m_fTimeElapsed;
 	kStream >> m_bIsPaused;
@@ -10513,6 +10547,9 @@ void CvGame::Write(FDataStream& kStream) const
 	kStream << m_iMapScoreMod;
 
 	// m_uiInitialTime not saved
+#ifdef GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
+	kStream << m_fPreviousTurnLen;
+#endif
 #ifdef TURN_TIMER_PAUSE_BUTTON
 	kStream << m_fTimeElapsed;
 	kStream << m_bIsPaused;

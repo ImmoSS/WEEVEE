@@ -6474,13 +6474,35 @@ bool CvUnit::paradrop(int iX, int iY)
 	CvPlot* fromPlot = plot();
 	//JON: CHECK FOR INTERCEPTION HERE
 
+#ifdef REMOVE_PARADROP_ANIMATION
+#ifdef MP_ALWAYS_QUICK_COMBAT_AND_MOVEMENT
+	if (CvPreGame::quickMovement() || GC.getGame().isNetworkMultiPlayer())
+#else
+	if (CvPreGame::quickMovement())
+#endif
+	{
+		setXY(pPlot->getX(), pPlot->getY());
+	}
+	else
+	{
+		//play paradrop animation
+		if (pPlot->isActiveVisible(false))
+		{
+			auto_ptr<ICvUnit1> pDllUnit(new CvDllUnit(this));
+			gDLL->GameplayUnitParadrop(pDllUnit.get());
+		}
+		setXY(pPlot->getX(), pPlot->getY(), true, true, false);
+	}
+#else
 	//play paradrop animation
 	if(pPlot->isActiveVisible(false))
 	{
 		auto_ptr<ICvUnit1> pDllUnit(new CvDllUnit(this));
 		gDLL->GameplayUnitParadrop(pDllUnit.get());
 	}
+
 	setXY(pPlot->getX(), pPlot->getY(), true, true, false);
+#endif
 
 	ICvEngineScriptSystem1* pkScriptSystem = gDLL->GetScriptSystem();
 	if (pkScriptSystem)

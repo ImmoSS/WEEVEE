@@ -9833,7 +9833,7 @@ bool CvUnit::canGivePolicies(const CvPlot* /*pPlot*/, bool /*bTestVisible*/) con
 #ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
 	if (isDelayedDeath())
 	{
-		SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
+		// SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
 		return false;
 	}
 #endif
@@ -9933,7 +9933,7 @@ bool CvUnit::canBlastTourism(const CvPlot* pPlot, bool bTestVisible) const
 #ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
 	if (isDelayedDeath())
 	{
-		SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
+		// SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
 		return false;
 	}
 #endif
@@ -10652,7 +10652,7 @@ bool CvUnit::isReadyForUpgrade() const
 #ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
 	if (isDelayedDeath())
 	{
-		SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
+		// SLOG("[%s:%d]: isDelayedDeath is true unit ID: %d", __FUNCTION__, __LINE__, GetID());
 		return false;
 	}
 #endif

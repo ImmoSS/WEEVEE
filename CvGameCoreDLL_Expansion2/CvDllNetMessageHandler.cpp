@@ -978,7 +978,7 @@ void CvDllNetMessageHandler::ResponseGreatPersonChoice(PlayerTypes ePlayer, Unit
 #ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
 	if (pCity && (kPlayer.GetNumFreeGreatPeople() <= 0))
 	{
-		SLOG("[%s:%d]: GetNumFreeGreatPeople is non-positive: %d", __FUNCTION__, __LINE__, kPlayer.GetNumFreeGreatPeople());
+		// SLOG("[%s:%d]: GetNumFreeGreatPeople is non-positive: %d", __FUNCTION__, __LINE__, kPlayer.GetNumFreeGreatPeople());
 	}
 
 	if (pCity && (kPlayer.GetNumFreeGreatPeople() > 0))
@@ -999,7 +999,7 @@ void CvDllNetMessageHandler::ResponseMayaBonusChoice(PlayerTypes ePlayer, UnitTy
 #ifdef NET_FIX_SINGLE_USE_ABILITY_DUPE
 	if (pCity && (kPlayer.GetNumMayaBoosts() <= 0))
 	{
-		SLOG("[%s:%d]: GetNumMayaBoosts is non-positive: %d", __FUNCTION__, __LINE__, kPlayer.GetNumMayaBoosts());
+		// SLOG("[%s:%d]: GetNumMayaBoosts is non-positive: %d", __FUNCTION__, __LINE__, kPlayer.GetNumMayaBoosts());
 	}
 
 	if (pCity && (kPlayer.GetNumMayaBoosts() > 0))

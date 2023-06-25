@@ -908,5 +908,5 @@
 /// Player can move only one unit while MP turn is loading
 #define GAME_ALLOW_ONLY_ONE_UNIT_MOVE_ON_TURN_LOADING
 /// move autosave to the end of turn
-#define AUTOSAVE_END_OF_TURN
+// #define AUTOSAVE_END_OF_TURN
 #endif

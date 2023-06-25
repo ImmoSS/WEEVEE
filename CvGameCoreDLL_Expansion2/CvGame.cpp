@@ -1,5 +1,5 @@
 /*	-------------------------------------------------------------------------------------------------------
-	© 1991-2012 Take-Two Interactive Software and its subsidiaries.  Developed by Firaxis Games.  
+	ï¿½ 1991-2012 Take-Two Interactive Software and its subsidiaries.  Developed by Firaxis Games.  
 	Sid Meier's Civilization V, Civ, Civilization, 2K Games, Firaxis Games, Take-Two Interactive Software 
 	and their respective logos are all trademarks of Take-Two interactive Software, Inc.  
 	All other marks and trademarks are the property of their respective owners.  
@@ -8406,10 +8406,12 @@ void CvGame::doTurn()
 
 	LogGameState();
 
+#ifndef AUTOSAVE_END_OF_TURN
 	if(isNetworkMultiPlayer())
 	{//autosave after doing a turn
 		gDLL->AutoSave(false);
 	}
+#endif
 
 	gDLL->PublishNewGameTurn(getGameTurn());
 }

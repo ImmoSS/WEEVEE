@@ -886,6 +886,8 @@
 
 #define WEEVEE_EARTH_MOTHER_NERF
 
+
+/// Removing paradrop animation for better UI expirience
 #define REMOVE_PARADROP_ANIMATION
 /// Removing some civilans animations for better UI expirience
 #define REMOVE_GAMEPLAY_UNIT_ACTIVATE_ANIMATION
@@ -905,4 +907,6 @@
 #define GAME_UPDATE_TURN_TIMER_ONCE_PER_TURN
 /// Player can move only one unit while MP turn is loading
 #define GAME_ALLOW_ONLY_ONE_UNIT_MOVE_ON_TURN_LOADING
+/// move autosave to the end of turn
+#define AUTOSAVE_END_OF_TURN
 #endif

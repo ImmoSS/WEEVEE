@@ -889,4 +889,6 @@
 #define REMOVE_PARADROP_ANIMATION
 /// Removing some civilans animations for better UI expirience
 #define REMOVE_GAMEPLAY_UNIT_ACTIVATE_ANIMATION
+///
+#define WLKTD_STARTS_IF_NO_VALID_RESOURCES_TO_DEMAND
 #endif

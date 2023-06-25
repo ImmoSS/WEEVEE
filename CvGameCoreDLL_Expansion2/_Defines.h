@@ -891,4 +891,6 @@
 #define REMOVE_GAMEPLAY_UNIT_ACTIVATE_ANIMATION
 ///
 #define WLKTD_STARTS_IF_NO_VALID_RESOURCES_TO_DEMAND
+/// Planes will take damage and Guided Missiles will dissapear when war is declaring by Air Strike
+#define FIX_AIR_STRIKE_WHEN_DECLARING_WAR
 #endif

@@ -895,4 +895,6 @@
 #define FIX_AIR_STRIKE_WHEN_DECLARING_WAR
 /// Adds missing sanity checks; prevents unit/resource duping inside laggy game tick
 #define NET_FIX_SINGLE_USE_ABILITY_DUPE
+/// Fixes already corrupted saves leading to turn skip in simultaneous mode.
+#define AUTOSAVE_FIX_PREVENT_TURN_SKIP
 #endif

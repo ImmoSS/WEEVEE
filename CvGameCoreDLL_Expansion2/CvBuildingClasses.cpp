@@ -3140,6 +3140,12 @@ void CvCityBuildings::SetNumRealBuildingTimed(BuildingTypes eIndex, int iNewValu
 				}
 
 				GC.getGame().incrementBuildingClassCreatedCount(buildingClassType);
+#ifdef WEEVEE_WORLD_WONDERS_SAME_TURN
+				if(!(GC.getGame().getBuildingClassCreationTurn(buildingClassType) > 0))
+				{
+					GC.getGame().setBuildingClassCreationTurn(buildingClassType, GC.getGame().getGameTurn());
+				}
+#endif
 			}
 		}
 

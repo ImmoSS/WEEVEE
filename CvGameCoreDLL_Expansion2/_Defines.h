@@ -879,14 +879,14 @@
 #define CAN_PARADROP_HALF_TIMER
 ///
 #define CAN_SET_INTERCEPT_HALF_TIMER
-
+///
 #define MOD_RESOURCES_PRODUCTION_COST_MODIFIERS
-
+///
 // #define WEEVEE_AVAILABLE_TO_BUILD_BUILDINGS_ALLOWED_BY_BELIEFS
-
+///
 #define WEEVEE_EARTH_MOTHER_NERF
-
-
+///
+#define WEEVEE_WORLD_WONDERS_SAME_TURN
 /// Removing paradrop animation for better UI expirience
 #define REMOVE_PARADROP_ANIMATION
 /// Removing some civilans animations for better UI expirience

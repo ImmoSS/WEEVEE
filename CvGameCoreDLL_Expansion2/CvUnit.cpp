@@ -10466,8 +10466,8 @@ void CvUnit::promote(PromotionTypes ePromotion, int iLeaderUnitId)
 #endif
 	}
 	// Set that we have this Promotion
-	else
-	{
+	//else
+	//{
 		setHasPromotion(ePromotion, true);
 
 		ICvEngineScriptSystem1* pkScriptSystem = gDLL->GetScriptSystem();
@@ -10481,7 +10481,7 @@ void CvUnit::promote(PromotionTypes ePromotion, int iLeaderUnitId)
 			bool bResult;
 			LuaSupport::CallHook(pkScriptSystem, "UnitPromoted", args.get(), bResult);
 		}
-	}
+	//}
 
 	testPromotionReady();
 
@@ -19667,15 +19667,15 @@ bool CvUnit::isPromotionValid(PromotionTypes ePromotion) const
 		return false;
 
 	// Insta-heal - must be damaged
-	if(promotionInfo->IsInstaHeal())
-	{
-#ifdef NQM_UNIT_FIX_NO_DOUBLE_INSTAHEAL_ON_SAME_TURN
-		if (!canInstahealThisTurn())
-			return false;
-#endif
-		if(getDamage() == 0)
-			return false;
-	}
+//	if(promotionInfo->IsInstaHeal())
+//	{
+//#ifdef NQM_UNIT_FIX_NO_DOUBLE_INSTAHEAL_ON_SAME_TURN
+//		if (!canInstahealThisTurn())
+//			return false;
+//#endif
+//		if(getDamage() == 0)
+//			return false;
+//	}
 
 	// Can't acquire interception promotion if unit can't intercept!
 	if(promotionInfo->GetInterceptionCombatModifier() != 0)

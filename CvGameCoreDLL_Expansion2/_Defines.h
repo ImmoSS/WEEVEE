@@ -780,6 +780,8 @@
 #define NQ_GOLDEN_PILGRIMAGE
 // HACK: Mali Treasury needs to be in C++ instead of Lua to fix the resync issue
 #define NQ_MALI_TREASURY
+// India cow spawning building
+#define INDIA_COW_SPAWN
 // allow gifting faith to minors via beliefs
 #define NQ_BELIEF_TOGGLE_ALLOW_FAITH_GIFTS_TO_MINORS
 

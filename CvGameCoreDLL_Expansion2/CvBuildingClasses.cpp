@@ -161,6 +161,9 @@ CvBuildingEntry::CvBuildingEntry(void):
 #ifdef NQ_MALI_TREASURY
 	m_bMalianTreasury(false),
 #endif
+#ifdef INDIA_COW_SPAWN
+	m_bCowSpawn(false),
+#endif
 	m_bAllowsFoodTradeRoutes(false),
 	m_bAllowsProductionTradeRoutes(false),
 	m_bNullifyInfluenceModifier(false),
@@ -328,6 +331,9 @@ bool CvBuildingEntry::CacheResults(Database::Results& kResults, CvDatabaseUtilit
 	m_bEspionage = kResults.GetBool("Espionage");
 #ifdef NQ_MALI_TREASURY
 	m_bMalianTreasury = kResults.GetBool("MaliTreasury");
+#endif
+#ifdef INDIA_COW_SPAWN
+	m_bCowSpawn = kResults.GetBool("CowSpawn");
 #endif
 	m_bAllowsFoodTradeRoutes = kResults.GetBool("AllowsFoodTradeRoutes");
 	m_bAllowsProductionTradeRoutes = kResults.GetBool("AllowsProductionTradeRoutes");
@@ -1670,6 +1676,13 @@ bool CvBuildingEntry::IsEspionage() const
 bool CvBuildingEntry::IsMalianTreasury() const
 {
 	return m_bMalianTreasury;
+}
+#endif
+
+#ifdef INDIA_COW_SPAWN
+bool CvBuildingEntry::IsCowSpawn() const
+{
+	return m_bCowSpawn;
 }
 #endif
 

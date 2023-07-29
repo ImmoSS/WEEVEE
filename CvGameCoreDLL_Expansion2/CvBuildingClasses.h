@@ -238,6 +238,10 @@ public:
 #ifdef NQ_MALI_TREASURY
 	bool IsMalianTreasury() const;
 #endif
+
+#ifdef INDIA_COW_SPAWN
+	bool IsCowSpawn() const;
+#endif
 	bool AllowsFoodTradeRoutes() const;
 	bool AllowsProductionTradeRoutes() const;
 	bool NullifyInfluenceModifier() const;
@@ -477,6 +481,9 @@ private:
 	bool m_bEspionage;
 #ifdef NQ_MALI_TREASURY
 	bool m_bMalianTreasury;
+#endif
+#ifdef INDIA_COW_SPAWN
+	bool m_bCowSpawn;
 #endif
 	bool m_bAllowsFoodTradeRoutes;
 	bool m_bAllowsProductionTradeRoutes;

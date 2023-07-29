@@ -27,9 +27,9 @@ void CvUnitMovement::GetCostsForMove(const CvUnit* pUnit, const CvPlot* pFromPlo
 	
 
 #ifdef NQ_FIX_FASTER_ALONG_RIVER
-	if(bIgnoreTerrainCost || (bFasterAlongRiver && pToPlot->isRiver() && pFromPlot->isRiver()) || (bFasterInHills && pToPlot->isHills()))
+	if(bIgnoreTerrainCost || (bFasterAlongRiver && pToPlot->isRiver() && pFromPlot->isRiver()) || (bFasterInHills && pToPlot->isHills() && !pUnit->IsCombatUnit()))
 #else
-	if(bIgnoreTerrainCost || (bFasterAlongRiver && pToPlot->isRiver()) || (bFasterInHills && pToPlot->isHills()))
+	if(bIgnoreTerrainCost || (bFasterAlongRiver && pToPlot->isRiver()) || (bFasterInHills && pToPlot->isHills() && !pUnit->IsCombatUnit()))
 #endif
 	{
 		iRegularCost = 1;

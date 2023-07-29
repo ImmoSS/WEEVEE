@@ -6683,6 +6683,56 @@ void CvCity::processBuilding(BuildingTypes eBuilding, int iChange, bool bFirst, 
 			}
 #endif
 
+#ifdef INDIA_COW_SPAWN
+			if (pBuildingInfo->IsCowSpawn())
+			{
+				int validPlotCount = 0;
+				int validPlotList[NUM_CITY_PLOTS];
+				CvPlot* pLoopPlot;
+				for (int iCityPlotLoop = 1; iCityPlotLoop < NUM_CITY_PLOTS; iCityPlotLoop++)
+				{
+					pLoopPlot = plotCity(getX(), getY(), iCityPlotLoop);
+
+					if(pLoopPlot == NULL)
+						continue;
+
+					if(pLoopPlot->getOwner() != getOwner() || pLoopPlot->isWater() || pLoopPlot->isMountain() || pLoopPlot->getResourceType() != NO_RESOURCE)
+						continue;
+					if (pLoopPlot->getTerrainType() != TERRAIN_PLAINS && pLoopPlot->getTerrainType() == TERRAIN_HILL &&
+						pLoopPlot->getTerrainType() != TERRAIN_TUNDRA && pLoopPlot->getTerrainType() != TERRAIN_GRASS)
+						continue;
+					// cannot have any feature other than forest or jungle
+					if (pLoopPlot->getFeatureType() != NO_FEATURE) //&& pLoopPlot->getFeatureType() != FEATURE_FOREST && 
+						//pLoopPlot->getFeatureType() != FEATURE_JUNGLE  -- It now applies for cows, these shouldn't spawn on forest/jungle tiles.
+						continue;
+					validPlotList[validPlotCount] = iCityPlotLoop;
+					validPlotCount++;
+				}
+
+				if(validPlotCount>0)
+				{
+					CvPlot* pPlot = GetCityCitizens()->GetCityPlotFromIndex(validPlotList[1]);
+
+
+					ResourceTypes eResourceCow = (ResourceTypes)GC.getInfoTypeForString("RESOURCE_COW", true);
+					pPlot->setResourceType(eResourceCow, 1);
+					const char* resourceName = "";
+					int resourceID;
+					resourceName = GC.getResourceInfo(eResourceCow)->GetTextKey();
+					resourceID = eResourceCow;
+					// --- notification ---
+					Localization::String localizedText;
+					CvNotifications* pNotifications = GET_PLAYER(getOwner()).GetNotifications();
+					if(pNotifications)
+					{
+						localizedText = Localization::Lookup("TXT_KEY_COW_RESOURCE_FOUND");
+						localizedText << resourceName << getNameKey();
+						pNotifications->Add(NOTIFICATION_DISCOVERED_BONUS_RESOURCE, localizedText.toUTF8(), localizedText.toUTF8(), pPlot->getX(), pPlot->getY(), resourceID);
+					}
+				}
+			}
+#endif
+
 #ifdef NQ_MALI_TREASURY
 			// HACK: Mali Treasury needs to be here instead 
 			// New LEKMOD. Yoinking this code to make mongolia spicy ~EAP

@@ -6686,32 +6686,32 @@ void CvCity::processBuilding(BuildingTypes eBuilding, int iChange, bool bFirst, 
 #ifdef INDIA_COW_SPAWN
 			if (pBuildingInfo->IsCowSpawn())
 			{
-				int validPlotCount = 0;
-				int validPlotList[NUM_CITY_PLOTS];
+				bool bPlotFound = false;
 				CvPlot* pLoopPlot;
-				for (int iCityPlotLoop = 1; iCityPlotLoop < NUM_CITY_PLOTS; iCityPlotLoop++)
+				// didn't actually need both of these variables, bad Ashwin
+				int iValidPlot = 0;
+				int iCityPlotLoop = 0;
+				while (bPlotFound == false && iCityPlotLoop < NUM_CITY_PLOTS-1)
 				{
+					iCityPlotLoop++;
 					pLoopPlot = plotCity(getX(), getY(), iCityPlotLoop);
 
-					if(pLoopPlot == NULL)
-						continue;
-
-					if(pLoopPlot->getOwner() != getOwner() || pLoopPlot->isWater() || pLoopPlot->isMountain() || pLoopPlot->getResourceType() != NO_RESOURCE)
-						continue;
-					if (pLoopPlot->getTerrainType() != TERRAIN_PLAINS && pLoopPlot->getTerrainType() == TERRAIN_HILL &&
-						pLoopPlot->getTerrainType() != TERRAIN_TUNDRA && pLoopPlot->getTerrainType() != TERRAIN_GRASS)
-						continue;
-					// cannot have any feature other than forest or jungle
-					if (pLoopPlot->getFeatureType() != NO_FEATURE) //&& pLoopPlot->getFeatureType() != FEATURE_FOREST && 
-						//pLoopPlot->getFeatureType() != FEATURE_JUNGLE  -- It now applies for cows, these shouldn't spawn on forest/jungle tiles.
-						continue;
-					validPlotList[validPlotCount] = iCityPlotLoop;
-					validPlotCount++;
+					if(pLoopPlot != NULL &&
+						// check the tile has the same owner as the city, that the tile is not water, mountain, or resource tile
+						pLoopPlot->getOwner() == getOwner() && !pLoopPlot->isWater() && !pLoopPlot->isMountain() && (pLoopPlot->getResourceType() == NO_RESOURCE) &&
+						// check the tile is not a snow tile
+						pLoopPlot->getTerrainType() != TERRAIN_SNOW &&
+						// chek the feature type is either no feature, forest, or jungle
+						(pLoopPlot->getFeatureType() == NO_FEATURE || pLoopPlot->getFeatureType() == FEATURE_FOREST || pLoopPlot->getFeatureType() == FEATURE_JUNGLE))
+					{
+						bPlotFound = true;
+						iValidPlot = iCityPlotLoop;
+					}
 				}
 
-				if(validPlotCount>0)
+				if(bPlotFound)
 				{
-					CvPlot* pPlot = GetCityCitizens()->GetCityPlotFromIndex(validPlotList[1]);
+					CvPlot* pPlot = GetCityCitizens()->GetCityPlotFromIndex(iValidPlot);
 
 
 					ResourceTypes eResourceCow = (ResourceTypes)GC.getInfoTypeForString("RESOURCE_COW", true);

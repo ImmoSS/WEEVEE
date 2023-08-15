@@ -590,6 +590,9 @@ private:
 
 	// Arrays
 	int* m_paiBuildingClassEnabled;
+#ifdef ALLOW_SAMETURN_BELIEFS
+	int* m_paiBeliefAdoptionTurn;
+#endif
 };
 
 namespace CvBeliefHelpers

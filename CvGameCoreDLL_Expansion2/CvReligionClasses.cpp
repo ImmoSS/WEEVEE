@@ -1516,7 +1516,30 @@ bool CvGameReligions::IsInSomeReligion(BeliefTypes eBelief) const
 	{
 		if(it->m_Beliefs.HasBelief(eBelief))
 		{
+#ifdef ALLOW_SAMETURN_BELIEFS
+			int iOption = -1;
+			CvPreGame::GetGameOption("GAMEOPTION_ALLOW_SAMETURN_BELIEFS", iOption);
+			if (iOption == 0)
+			{
+				return true;
+			}
+			else if (iOption == 1)
+			{
+				CvBeliefEntry* pEntry = pkBeliefs->GetEntry((int)eBelief);
+				if (pEntry->IsPantheonBelief()
+				{
+					if(it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] < GC.getGame().getGameTurn())
+						return true;
+				}
+			}
+			else if (iOption == 2)
+			{
+				if(it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] < GC.getGame().getGameTurn())
+					return true;
+			}
+#else
 			return true;
+#endif
 		}
 	}
 

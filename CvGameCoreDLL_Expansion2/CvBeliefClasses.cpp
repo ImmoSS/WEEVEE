@@ -1129,6 +1129,9 @@ CvBeliefEntry* CvBeliefXMLEntries::GetEntry(int index)
 /// Constructor
 CvReligionBeliefs::CvReligionBeliefs():
 	m_paiBuildingClassEnabled(NULL)
+#ifdef ALLOW_SAMETURN_BELIEFS
+	, m_paiBeliefAdoptionTurn(NULL)
+#endif
 {
 	Reset();
 }
@@ -1210,12 +1213,27 @@ CvReligionBeliefs::CvReligionBeliefs(const CvReligionBeliefs& source)
 
 		m_paiBuildingClassEnabled[iI] = source.m_paiBuildingClassEnabled[iI];
 	}
+#ifdef ALLOW_SAMETURN_BELIEFS
+	m_paiBeliefAdoptionTurn = FNEW(int[GC.getNumBeliefInfos()], c_eCiv5GameplayDLL, 0);
+	for(int iI = 0; iI < GC.getNumBeliefInfos(); iI++)
+	{
+		CvBeliefEntry* pkBelief = GC.getBeliefInfo((BeliefTypes)iI);
+		if(!pkBelief)
+		{
+			continue;
+		}
+		m_paiBeliefAdoptionTurn[iI] = source.m_paiBeliefAdoptionTurn[iI];
+	}
+#endif
 }
 
 /// Deallocate memory created in initialize
 void CvReligionBeliefs::Uninit()
 {
 	SAFE_DELETE_ARRAY(m_paiBuildingClassEnabled);
+#ifdef ALLOW_SAMETURN_BELIEFS
+	SAFE_DELETE_ARRAY(m_paiBeliefAdoptionTurn);
+#endif
 }
 
 /// Reset data members
@@ -1292,6 +1310,18 @@ void CvReligionBeliefs::Reset()
 
 		m_paiBuildingClassEnabled[iI] = 0;
 	}
+#ifdef ALLOW_SAMETURN_BELIEFS
+	m_paiBeliefAdoptionTurn = FNEW(int[GC.getNumBeliefInfos()], c_eCiv5GameplayDLL, 0);
+	for(int iI = 0; iI < GC.getNumBeliefInfos(); iI++)
+	{
+		CvBeliefEntry* pkBelief = GC.getBeliefInfo((BeliefTypes)iI);
+		if(!pkBelief)
+		{
+			continue;
+		}
+		m_paiBeliefAdoptionTurn[iI] = -1;
+	}
+#endif
 }
 
 /// Store off data on bonuses from beliefs
@@ -1366,6 +1396,10 @@ void CvReligionBeliefs::AddBelief(BeliefTypes eBelief)
 			m_paiBuildingClassEnabled[iI]++;
 		}
 	}
+#ifdef ALLOW_SAMETURN_BELIEFS
+	if (m_paiBeliefAdoptionTurn[eBelief] < 0)
+		m_paiBeliefAdoptionTurn[eBelief] = GC.getGame().getGameTurn();
+#endif
 
 	if(belief->GetSpreadModifierDoublingTech() != NO_TECH)
 	{
@@ -2164,6 +2198,35 @@ void CvReligionBeliefs::Read(FDataStream& kStream)
 	}
 
 	BuildingClassArrayHelpers::Read(kStream, m_paiBuildingClassEnabled);
+#ifdef ALLOW_SAMETURN_BELIEFS
+	int iNumEntries;
+	int iType;
+
+	kStream >> iNumEntries;
+
+	for(int iI = 0; iI < iNumEntries; iI++)
+	{
+		bool bValid = true;
+		iType = CvInfosSerializationHelper::ReadHashed(kStream, &bValid);
+		if(iType != -1 || !bValid)
+		{
+			if(iType != -1)
+			{
+				kStream >> m_paiBuildingClassEnabled[iType];
+			}
+			else
+			{
+				CvString szError;
+				szError.Format("LOAD ERROR: Belief Type not found");
+				GC.LogMessage(szError.GetCString());
+				CvAssertMsg(false, szError);
+				int iDummy;
+				kStream >> iDummy;	// Skip it.
+			}
+		}
+	}
+	// BuildingClassArrayHelpers::Read(kStream, m_paiBeliefAdoptionTurn);
+#endif
 }
 
 /// Serialization write
@@ -2231,6 +2294,25 @@ void CvReligionBeliefs::Write(FDataStream& kStream) const
 	}
 
 	BuildingClassArrayHelpers::Write(kStream, m_paiBuildingClassEnabled, GC.getNumBuildingClassInfos());
+#ifdef ALLOW_SAMETURN_BELIEFS
+	kStream << GC.getNumBeliefInfos();
+
+	for(int iI = 0; iI < GC.getNumBeliefInfos(); iI++)
+	{
+		const BeliefTypes eBelief = static_cast<BeliefTypes>(iI);
+		CvBeliefEntry* pkBeliefInfo = GC.getBeliefInfo(eBelief);
+		if(pkBeliefInfo)
+		{
+			CvInfosSerializationHelper::WriteHashed(kStream, pkBeliefInfo);
+			kStream << m_paiBeliefAdoptionTurn[iI];
+		}
+		else
+		{
+			kStream << (int)0;
+		}
+	}
+	// BuildingClassArrayHelpers::Write(kStream, m_paiBeliefAdoptionTurn, GC.getNumBeliefInfos());
+#endif
 }
 
 /// BELIEF HELPER CLASSES

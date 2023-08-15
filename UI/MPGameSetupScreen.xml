@@ -69,6 +69,11 @@
                 <PullDown Style="GenericPullDown" ScrollThreshold="400" Offset="150,0" Size="300,27" SpaceForScroll="0" ID="TurnModePull"/>
               </Container>
 
+              <Container Anchor="L,T" Size="450,32" Offset="20,0" ID="AllowSameturnBeliefsRoot">
+                <Label Anchor="L,C" ColorSet="Beige_Black" Font="TwCenMT20" FontStyle="Shadow" String="Beliefs Sameturns" />
+                <PullDown Style="GenericPullDown" ScrollThreshold="400" Offset="150,0" Size="300,27" SpaceForScroll="0" ID="AllowSameturnBeliefsPull"/>
+              </Container>
+
             </Stack>
 
             <!-- Victory Conditions -->

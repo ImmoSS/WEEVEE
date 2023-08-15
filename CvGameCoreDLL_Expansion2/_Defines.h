@@ -911,4 +911,6 @@
 #define GAME_ALLOW_ONLY_ONE_UNIT_MOVE_ON_TURN_LOADING
 /// move autosave to the end of turn
 #define AUTOSAVE_END_OF_TURN
+///
+#define ALLOW_SAMETURN_BELIEFS
 #endif

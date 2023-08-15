@@ -22,6 +22,16 @@ g_turnModeData["TXT_KEY_GAME_OPTION_SIMULTANEOUS_TURNS"]	= { tooltip = "TXT_KEY_
 g_turnModeData["TXT_KEY_GAME_OPTION_SEQUENTIAL_TURNS"]		= { tooltip = "TXT_KEY_GAME_OPTION_SEQUENTIAL_TURNS_HELP",		index=1 };
 g_turnModeData["TXT_KEY_GAME_OPTION_DYNAMIC_TURNS"]				= { tooltip = "TXT_KEY_GAME_OPTION_DYNAMIC_TURNS_HELP",				index=2 };
 
+-- Allow_Sameturn_Beliefs Pulldown
+local g_AllowSameturnBeliefsOptions = { "Standart",  
+														"Allows Pantheon Beliefs Sameturns",
+														"Allows All Beliefs Sameturns" }
+																						
+local g_AllowSameturnBeliefsData = {};
+g_AllowSameturnBeliefsData["Standart"]	= { index=0 };
+g_AllowSameturnBeliefsData["Allows Pantheon Beliefs Sameturns"]		= { index=1 };
+g_AllowSameturnBeliefsData["Allows All Beliefs Sameturns"]				= { index=2 };
+
 local hoursStr = Locale.ConvertTextKey( "TXT_KEY_HOURS" );
 local secondsStr = Locale.ConvertTextKey( "TXT_KEY_SECONDS" );
 
@@ -321,7 +331,20 @@ function UpdateGameOptionsDisplay(bUpdateOnly)
 	Controls.TurnModePull:GetButton():LocalizeAndSetText( turnModeStr );
 	Controls.TurnModePull:GetButton():LocalizeAndSetToolTip( g_turnModeData[turnModeStr].tooltip );
 	Controls.TurnModePull:SetDisabled( not bCanEdit );
-	Controls.TurnModeRoot:SetHide(PreGame.IsHotSeatGame());	
+	Controls.TurnModeRoot:SetHide(PreGame.IsHotSeatGame());
+
+	-- Update Allow_Sameturn_Beliefs
+	local AllowSameturnBeliefsStr
+	if(PreGame.GetGameOption("GAMEOPTION_ALLOW_SAMETURN_BELIEFS") == 0) then
+		AllowSameturnBeliefsStr = "Standart";
+	elseif(PreGame.GetGameOption("GAMEOPTION_ALLOW_SAMETURN_BELIEFS") == 1) then
+		AllowSameturnBeliefsStr = "Allows Pantheon Beliefs Sameturns";
+	else
+		AllowSameturnBeliefsStr = "Allows All Beliefs Sameturns";
+	end
+	Controls.AllowSameturnBeliefsPull:GetButton():LocalizeAndSetText( AllowSameturnBeliefsStr );
+	Controls.AllowSameturnBeliefsPull:SetDisabled( not bCanEdit );
+	Controls.AllowSameturnBeliefsRoot:SetHide(PreGame.IsHotSeatGame());
 
 	-- Update the options panel
 	RefreshGameOptions();
@@ -820,6 +843,29 @@ function OnTurnModePull( id )
 	UpdateGameOptionsDisplay();
 end
 Controls.TurnModePull:RegisterSelectionCallback( OnTurnModePull );
+
+----------------------------------------------------------------
+-- ALLOWS BELIEFS SAMETURNS
+for i, AllowSameturnBeliefs in ipairs(g_AllowSameturnBeliefsOptions) do
+	local controlTable = {};
+	Controls.AllowSameturnBeliefsPull:BuildEntry( "InstanceOne", controlTable );
+	controlTable.Button:LocalizeAndSetText(AllowSameturnBeliefs);
+	controlTable.Button:SetVoid1( g_AllowSameturnBeliefsData[AllowSameturnBeliefs].index);
+end
+Controls.AllowSameturnBeliefsPull:CalculateInternals();
+
+function OnAllowSameturnBeliefsPull( id )
+	if(id == g_AllowSameturnBeliefsData["Standart"].index) then
+		PreGame.SetGameOption("GAMEOPTION_ALLOW_SAMETURN_BELIEFS", id);
+	elseif(id == g_AllowSameturnBeliefsData["Allows Pantheon Beliefs Sameturns"].index) then
+		PreGame.SetGameOption("GAMEOPTION_ALLOW_SAMETURN_BELIEFS", id);
+	elseif(id == g_AllowSameturnBeliefsData["Allows All Beliefs Sameturns"].index) then
+		PreGame.SetGameOption("GAMEOPTION_ALLOW_SAMETURN_BELIEFS", id);
+	end
+	
+	UpdateGameOptionsDisplay();
+end
+Controls.AllowSameturnBeliefsPull:RegisterSelectionCallback( OnAllowSameturnBeliefsPull );
 
 
 ----------------------------------------------------------------

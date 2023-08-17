@@ -1058,6 +1058,7 @@ CvGameReligions::FOUNDING_RESULT CvGameReligions::CanFoundReligion(PlayerTypes e
 
 	CvReligion kReligion(eReligion, ePlayer, pkHolyCity, false);
 
+#ifndef ALLOW_SAMETURN_BELIEFS
 	// Copy over belief from your pantheon
 	BeliefTypes eBelief = GC.getGame().GetGameReligions()->GetBeliefInPantheon(kPlayer.GetID());
 	if(eBelief != NO_BELIEF)
@@ -1080,6 +1081,7 @@ CvGameReligions::FOUNDING_RESULT CvGameReligions::CanFoundReligion(PlayerTypes e
 	{
 		strcpy_s(kReligion.m_szCustomName, szCustomName);
 	}
+#endif
 
 	// Now see if there are any conflicts.
 #ifdef AUI_ITERATOR_POSTFIX_INCREMENT_OPTIMIZATIONS
@@ -1092,6 +1094,15 @@ CvGameReligions::FOUNDING_RESULT CvGameReligions::CanFoundReligion(PlayerTypes e
 		{
 			if(kReligion.m_eReligion == (*it).m_eReligion)
 				return FOUNDING_RELIGION_IN_USE;
+			
+#ifdef ALLOW_SAMETURN_BELIEFS
+			if(eBelief1 != NO_BELIEF && IsInSomeReligion(eBelief1))
+				return FOUNDING_BELIEF_IN_USE;
+			if(eBelief2 != NO_BELIEF && IsInSomeReligion(eBelief2))
+				return FOUNDING_BELIEF_IN_USE;
+
+			// return FOUNDING_OK;
+#endif
 
 			for(int iSrcBelief = (*it).m_Beliefs.GetNumBeliefs(); iSrcBelief--;)
 			{
@@ -1101,7 +1112,11 @@ CvGameReligions::FOUNDING_RESULT CvGameReligions::CanFoundReligion(PlayerTypes e
 					for(int iDestBelief = kReligion.m_Beliefs.GetNumBeliefs(); iDestBelief--;)
 					{
 						BeliefTypes eDestBelief = kReligion.m_Beliefs.GetBelief(iDestBelief);
+#ifdef ALLOW_SAMETURN_BELIEFS
+						if(eDestBelief != NO_BELIEF && eDestBelief == eSrcBelief && kReligion.m_Beliefs.m_paiBeliefAdoptionTurn[eDestBelief] > 0 && !kReligion.m_Beliefs.m_paiBeliefAdoptionTurn[eDestBelief] < GC.getGame().getGameTurn())
+#else
 						if(eDestBelief != NO_BELIEF && eDestBelief == eSrcBelief)
+#endif
 							return FOUNDING_BELIEF_IN_USE;
 					}
 				}
@@ -1525,16 +1540,21 @@ bool CvGameReligions::IsInSomeReligion(BeliefTypes eBelief) const
 			}
 			else if (iOption == 1)
 			{
+				CvBeliefXMLEntries* pkBeliefs = GC.GetGameBeliefs();
 				CvBeliefEntry* pEntry = pkBeliefs->GetEntry((int)eBelief);
-				if (pEntry->IsPantheonBelief()
+				if (pEntry->IsPantheonBelief())
 				{
-					if(it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] < GC.getGame().getGameTurn())
+					if(it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] > 0 && it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] < GC.getGame().getGameTurn())
 						return true;
+				}
+				else
+				{
+					return true;
 				}
 			}
 			else if (iOption == 2)
 			{
-				if(it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] < GC.getGame().getGameTurn())
+				if(it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] > 0 && it->m_Beliefs.m_paiBeliefAdoptionTurn[eBelief] < GC.getGame().getGameTurn())
 					return true;
 			}
 #else

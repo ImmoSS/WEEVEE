@@ -529,6 +529,9 @@ public:
 #ifdef NQ_BELIEF_TOGGLE_ALLOW_FAITH_GIFTS_TO_MINORS
 	bool IsAllowsFaithGiftsToMinors() const;
 #endif
+#ifdef ALLOW_SAMETURN_BELIEFS
+	int* m_paiBeliefAdoptionTurn;
+#endif
 
 	// Serialization
 	void Read(FDataStream& kStream);
@@ -590,9 +593,6 @@ private:
 
 	// Arrays
 	int* m_paiBuildingClassEnabled;
-#ifdef ALLOW_SAMETURN_BELIEFS
-	int* m_paiBeliefAdoptionTurn;
-#endif
 };
 
 namespace CvBeliefHelpers

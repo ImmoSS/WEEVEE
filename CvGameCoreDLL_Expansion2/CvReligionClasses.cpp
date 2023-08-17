@@ -1100,6 +1100,10 @@ CvGameReligions::FOUNDING_RESULT CvGameReligions::CanFoundReligion(PlayerTypes e
 				return FOUNDING_BELIEF_IN_USE;
 			if(eBelief2 != NO_BELIEF && IsInSomeReligion(eBelief2))
 				return FOUNDING_BELIEF_IN_USE;
+			if(eBelief3 != NO_BELIEF && IsInSomeReligion(eBelief3))
+				return FOUNDING_BELIEF_IN_USE;
+			if(eBelief4 != NO_BELIEF && IsInSomeReligion(eBelief4))
+				return FOUNDING_BELIEF_IN_USE;
 
 			// return FOUNDING_OK;
 #endif

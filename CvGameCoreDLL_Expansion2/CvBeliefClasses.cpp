@@ -2212,7 +2212,7 @@ void CvReligionBeliefs::Read(FDataStream& kStream)
 		{
 			if(iType != -1)
 			{
-				kStream >> m_paiBuildingClassEnabled[iType];
+				kStream >> m_paiBeliefAdoptionTurn[iType];
 			}
 			else
 			{

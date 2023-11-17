@@ -206,6 +206,7 @@ CvPlayer::CvPlayer() :
 	, m_iGreatScientistsCreated(0) // GJS
 	, m_iGreatEngineersCreated(0) // GJS
 	, m_iGreatMerchantsCreated(0) // GJS
+	, m_iGreatPatronsCreated(0) // Ashwin
 	, m_iGreatProphetsCreated(0) // GJS
 	, m_iMerchantsFromFaith(0)
 	, m_iScientistsFromFaith(0)
@@ -897,6 +898,7 @@ void CvPlayer::uninit()
 	m_iGreatScientistsCreated = 0; // GJS
 	m_iGreatEngineersCreated = 0; // GJS
 	m_iGreatMerchantsCreated = 0; // GJS
+	m_iGreatPatronsCreated = 0; // Ashwin
 	m_iGreatProphetsCreated = 0; // GJS
 	m_iMerchantsFromFaith = 0;
 	m_iScientistsFromFaith = 0;
@@ -7970,6 +7972,17 @@ bool CvPlayer::canConstruct(BuildingTypes eBuilding, bool bContinue, bool bTestV
 		}
 	}
 
+	// checks to make sure civilization has the prerequisite policy to construct the building (ashwin):
+
+	PolicyTypes ePolicy = (PolicyTypes)pBuildingInfo.GetPolicyType(); 
+	if (ePolicy != NO_POLICY)
+	{
+		if (!GetPlayerPolicies()->HasPolicy(ePolicy))
+		{
+			return false;
+		}
+	}
+
 	if(!(currentTeam.GetTeamTechs()->HasTech((TechTypes)(pBuildingInfo.GetPrereqAndTech()))))
 	{
 		return false;
@@ -11244,8 +11257,10 @@ void CvPlayer::DoYieldBonusFromKill(YieldTypes eYield, UnitTypes eAttackingUnitT
 				}
 			}
 			
-			// NQMP GJS - Cap Yields from kills to 30 per type (policy/trait/belief/other)
-			iPolicyValue = min((iPolicyValue * iCombatStrength) / 100, 30); 
+			// Ashwin: get the kill yield cap from the trait
+			int iKillYieldCap = 0;
+			iKillYieldCap += GetPlayerTraits()->GetKillYieldCap();
+			iPolicyValue = min((iPolicyValue * iCombatStrength) / 100, iKillYieldCap); 
 			iTraitValue = (iTraitValue * iCombatStrength) / 100;
 			iBeliefValue = min((iBeliefValue * iCombatStrength) / 100, 30);
 			iOtherValue = (iOtherValue * iCombatStrength) / 100;
@@ -14497,6 +14512,17 @@ void CvPlayer::incrementGreatMerchantsCreated()
 	m_iGreatMerchantsCreated++;
 }
 
+// ---------------------------------------------------------------------------------
+// Ashwin: make Great Patrons have a separate counter
+int CvPlayer::getGreatPatronsCreated() const
+{
+	return m_iGreatPatronsCreated;
+}
+
+void CvPlayer::incrementGreatPatronsCreated()
+{
+	m_iGreatPatronsCreated++;
+}
 //	--------------------------------------------------------------------------------
 int CvPlayer::getGreatProphetsCreated() const
 {
@@ -24235,6 +24261,12 @@ void CvPlayer::processPolicies(PolicyTypes ePolicy, int iChange)
 										//incrementGreatMerchantsCreated();
 										pNewUnit->jumpToNearestValidPlot();
 									}
+									else if (pNewUnit->getUnitInfo().GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_PATRON"))
+									{
+										//Ashwin: think this just separates the class so the counter doesn't go up for other units
+										//incrementGreatPatronsCreated();
+										pNewUnit->jumpToNearestValidPlot();
+									}
 									else if (pNewUnit->getUnitInfo().GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_PROPHET"))
 									{
 										incrementGreatProphetsCreated();
@@ -24639,6 +24671,7 @@ void CvPlayer::Read(FDataStream& kStream)
 	kStream >> m_iGreatScientistsCreated; // GJS
 	kStream >> m_iGreatEngineersCreated; // GJS
 	kStream >> m_iGreatMerchantsCreated; // GJS
+	kStream >> m_iGreatPatronsCreated; // Ashwin
 	kStream >> m_iGreatProphetsCreated; // GJS
 	kStream >> m_iMerchantsFromFaith;
 	kStream >> m_iScientistsFromFaith;
@@ -25246,6 +25279,7 @@ void CvPlayer::Write(FDataStream& kStream) const
 	kStream << m_iGreatScientistsCreated; // GJS
 	kStream << m_iGreatEngineersCreated; // GJS
 	kStream << m_iGreatMerchantsCreated; // GJS
+	kStream << m_iGreatPatronsCreated; // Ashwin
 	kStream << m_iGreatProphetsCreated; // GJS
 	kStream << m_iMerchantsFromFaith;
 	kStream << m_iScientistsFromFaith;

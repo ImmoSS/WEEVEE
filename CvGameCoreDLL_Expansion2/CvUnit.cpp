@@ -238,6 +238,7 @@ CvUnit::CvUnit() :
 	, m_iHealOnPillageCount(0)
 	, m_iHPHealedIfDefeatEnemy("CvUnit::m_iHPHealedIfDefeatEnemy", m_syncArchive)
 	, m_iGoldenAgeValueFromKills(0)
+	, m_iFaithFromKills(0)
 	, m_iHealIfDefeatExcludeBarbariansCount("CvUnit::m_iHealIfDefeatExcludeBarbariansCount", m_syncArchive)
 	, m_iTacticalAIPlotX("CvUnit::m_iTacticalAIPlotX", m_syncArchive)
 	, m_iTacticalAIPlotY("CvUnit::m_iTacticalAIPlotY", m_syncArchive)
@@ -1003,6 +1004,7 @@ void CvUnit::reset(int iID, UnitTypes eUnit, PlayerTypes eOwner, bool bConstruct
 	m_iFreePillageMoveCount = 0;
 	m_iHPHealedIfDefeatEnemy = 0;
 	m_iGoldenAgeValueFromKills = 0;
+	m_iFaithFromKills = 0;
 	m_iSapperCount = 0;
 	m_iCanHeavyCharge = 0;
 #ifdef NQ_HEAVY_CHARGE_DOWNHILL
@@ -2459,7 +2461,7 @@ bool CvUnit::canEnterTerrain(const CvPlot& enterPlot, byte bMoveFlags) const
 	if(enterPlot.isMountain())
 	{
 		CvPlayer& kPlayer = GET_PLAYER(getOwner());
-		if(!kPlayer.GetPlayerTraits()->IsAbleToCrossMountains() && !IsHoveringUnit() && !canMoveAllTerrain())
+		if(!(kPlayer.GetPlayerTraits()->IsAbleToCrossMountains() && !IsCombatUnit()) && !IsHoveringUnit() && !canMoveAllTerrain())
 		{
 			return false;
 		}
@@ -13943,12 +13945,29 @@ int CvUnit::GetGoldenAgeValueFromKills() const
 		return m_iGoldenAgeValueFromKills;
 }
 
+
+
 //	--------------------------------------------------------------------------------
 void CvUnit::ChangeGoldenAgeValueFromKills(int iValue)
 {
 	VALIDATE_OBJECT
 		m_iGoldenAgeValueFromKills += iValue;
 	CvAssert(GetGoldenAgeValueFromKills() >= 0);
+}
+
+// ---------------------------------------------------------------------------------
+int CvUnit::GetFaithFromKills() const
+{
+	VALIDATE_OBJECT
+		return m_iFaithFromKills;
+}
+
+// ---------------------------------------------------------------------------------
+void CvUnit::ChangeFaithFromKills(int iValue)
+{
+	VALIDATE_OBJECT
+		m_iFaithFromKills += iValue;
+	CvAssert(GetFaithFromKills() >= 0);
 }
 
 //	--------------------------------------------------------------------------------
@@ -19847,6 +19866,7 @@ void CvUnit::setHasPromotion(PromotionTypes eIndex, bool bNewValue)
 		changeExtraNavalMoves(thisPromotion.GetExtraNavalMoves() * iChange);
 		changeHPHealedIfDefeatEnemy(thisPromotion.GetHPHealedIfDefeatEnemy() * iChange);
 		ChangeGoldenAgeValueFromKills(thisPromotion.GetGoldenAgeValueFromKills() * iChange);
+		ChangeFaithFromKills(thisPromotion.GetFaithFromKills() * iChange);
 		changeExtraWithdrawal(thisPromotion.GetExtraWithdrawal() * iChange);
 		changeExtraRange(thisPromotion.GetRangeChange() * iChange);
 		ChangeRangedAttackModifier(thisPromotion.GetRangedAttackModifier() * iChange);
@@ -20255,6 +20275,7 @@ void CvUnit::read(FDataStream& kStream)
 	{
 		m_iGoldenAgeValueFromKills = 0;
 	}
+	kStream >> m_iFaithFromKills;
 
 	kStream >> m_iGreatGeneralReceivesMovementCount;
 	kStream >> m_iEmbarkedUnitReceivesMovementCount; // NQMP GJS - Danish Lonship
@@ -20425,6 +20446,7 @@ void CvUnit::write(FDataStream& kStream) const
 	kStream << m_iHealOnPillageCount;
 	kStream << m_iFlankAttackModifier;
 	kStream << m_iGoldenAgeValueFromKills;
+	kStream << m_iFaithFromKills;
 
 	kStream << m_iGreatGeneralReceivesMovementCount;
 	kStream << m_iEmbarkedUnitReceivesMovementCount; // NQMP GJS - Danish Longship

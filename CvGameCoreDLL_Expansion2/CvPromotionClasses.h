@@ -123,6 +123,7 @@ public:
 	int GetExtraNavalMoves() const;
 	int GetHPHealedIfDefeatEnemy() const;
 	int GetGoldenAgeValueFromKills() const;
+	int GetFaithFromKills() const;
 	int GetExtraWithdrawal() const;
 	int GetEmbarkExtraVisibility() const;
 	int GetEmbarkDefenseModifier() const;
@@ -320,6 +321,7 @@ protected:
 	int m_iExtraNavalMoves;
 	int m_iHPHealedIfDefeatEnemy;
 	int m_iGoldenAgeValueFromKills;
+	int m_iFaithFromKills;
 	int m_iExtraWithdrawal;
 	int m_iEmbarkExtraVisibility;
 	int m_iEmbarkDefenseModifier;

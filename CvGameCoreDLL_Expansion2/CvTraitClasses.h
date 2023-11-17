@@ -129,6 +129,7 @@ public:
 	int GetLandTradeRouteRangeBonus() const;
 	int GetTradeReligionModifier() const;
 	int GetTradeBuildingModifier() const;
+	int GetKillYieldCap() const;
 	
 	// Here we insert usefull new table entries to smooth out existing code (From the Community-Patch DLL) ~EAP
 	TechTypes GetFreeBuildingPrereqTech() const; 
@@ -285,6 +286,7 @@ protected:
 	int m_iLandTradeRouteRangeBonus;
 	int m_iTradeReligionModifier;
 	int m_iTradeBuildingModifier;
+	int m_iKillYieldCap;
 
 	TechTypes m_eFreeUnitPrereqTech;
 	ImprovementTypes m_eCombatBonusImprovement;
@@ -707,6 +709,11 @@ public:
 		return m_iTradeBuildingModifier;
 	}
 
+	int GetKillYieldCap() const
+	{
+		return m_iKillYieldCap;
+	}
+
 	bool IsFightWellDamaged() const
 	{
 		return m_bFightWellDamaged;
@@ -1013,6 +1020,7 @@ private:
 	int m_iLandTradeRouteRangeBonus;
 	int m_iTradeReligionModifier;
 	int m_iTradeBuildingModifier;
+	int m_iKillYieldCap;
 	// Saved
 
 	bool m_bFightWellDamaged;

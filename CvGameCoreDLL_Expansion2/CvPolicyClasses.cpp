@@ -4966,7 +4966,9 @@ int PolicyHelpers::GetNumFreePolicies(PolicyBranchTypes eBranch)
 		if (pkEntry->GetEraPrereq() >= GC.getGame().getStartEra())
 		{
 			int iNumPreviousUnlockers = PolicyHelpers::GetNumPlayersWithBranchUnlocked(eBranch);
-			if (iNumPreviousUnlockers == 0)
+			// now we give everyone a first adopter free policy, instead of checking if other people have the tree open
+			// if (iNumPreviousUnlockers == 0)
+			if(true)
 			{
 				iFreePolicies = pkEntry->GetFirstAdopterFreePolicies();
 			}

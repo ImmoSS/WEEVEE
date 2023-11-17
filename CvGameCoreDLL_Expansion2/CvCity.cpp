@@ -7034,6 +7034,12 @@ void CvCity::processBuilding(BuildingTypes eBuilding, int iChange, bool bFirst, 
 								if (!pFreeUnit->jumpToNearestValidPlot())
 									pFreeUnit->kill(false);	// Could not find a valid spot!
 							}
+							else if (pkUnitInfo->GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_PATRON"))
+							{
+								// Ashwin - make the patron actually count
+								if (!pFreeUnit->jumpToNearestValidPlot())
+									pFreeUnit->kill(false); // Could not find a valid spot! why am I duplicating comments I don't understand?
+							}
 							else if (pkUnitInfo->GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_PROPHET"))
 							{
 								// GJS NQMP - Free Great Prophet is now actually free

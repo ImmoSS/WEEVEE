@@ -3689,6 +3689,27 @@ void CvUnitCombat::ApplyPostCombatTraitEffects(CvUnit* pkWinner, CvUnit* pkLoser
 			}
 		}
 	}
+	if (pkWinner->GetFaithFromKills() > 0)
+	{
+		int iCombatStrength = max(pkLoser->getUnitInfo().GetCombat(), pkLoser->getUnitInfo().GetRangedCombat());
+		if(iCombatStrength > 0)
+		{
+			int iValue = iCombatStrength * pkWinner->GetFaithFromKills() / 100;
+			kPlayer.ChangeFaith(iValue);
+
+			CvString yieldString = "[COLOR_WHITE]+%d[ENDCOLOR][ICON_PEACE]";
+
+			if(pkWinner->getOwner() == GC.getGame().getActivePlayer())
+			{
+				char text[256] = {0};
+				float fDelay = GC.getPOST_COMBAT_TEXT_DELAY() * 1.5f;
+				sprintf_s(text, yieldString, iValue);
+				GC.GetEngineUserInterface()->AddPopupText(pkLoser->getX(), pkLoser->getY(), text, fDelay);
+
+				iExistingDelay++;
+			}
+		}
+	}
 
 	// Earn bonuses for kills?
 	kPlayer.DoYieldsFromKill(pkWinner->getUnitType(), pkLoser->getUnitType(), pkLoser->getX(), pkLoser->getY(), pkLoser->isBarbarian(), iExistingDelay);

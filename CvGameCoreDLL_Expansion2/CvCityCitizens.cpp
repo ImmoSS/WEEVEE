@@ -3614,6 +3614,10 @@ int CvCityCitizens::GetSpecialistUpgradeThreshold(UnitClassTypes eUnitClass)
 	{
 		iNumCreated = GET_PLAYER(GetCity()->getOwner()).getGreatMerchantsCreated();
 	}
+	else if (eUnitClass == GC.getInfoTypeForString("UNITCLASS_PATRON", true))
+	{
+		iNumCreated = GET_PLAYER(GetCity()->getOwner()).getGreatPatronsCreated();
+	}
 	// GJS: end separation of great people types
 	else
 	{
@@ -3704,6 +3708,11 @@ void CvCityCitizens::DoSpawnGreatPerson(UnitTypes eUnit, bool bIncrementCount, b
 		else if (newUnit->getUnitInfo().GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_MERCHANT"))
 		{
 			kPlayer.incrementGreatMerchantsCreated();
+		}
+		else if (newUnit->getUnitInfo().GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_PATRON"))
+		{
+			// Ashwin: increment Great Patron count when you spawn one
+			kPlayer.incrementGreatPatronsCreated();
 		}
 		else if (newUnit->getUnitInfo().GetUnitClassType() == GC.getInfoTypeForString("UNITCLASS_PROPHET"))
 		{

@@ -819,6 +819,9 @@ public:
 	int GetGoldenAgeValueFromKills() const;
 	void ChangeGoldenAgeValueFromKills(int iValue);
 
+	int GetFaithFromKills() const;
+	void ChangeFaithFromKills(int iValue);
+
 	int getExtraRange() const;
 	void changeExtraRange(int iChange);
 
@@ -1496,6 +1499,7 @@ protected:
 	int m_iHealOnPillageCount;
 	FAutoVariable<int, CvUnit> m_iHPHealedIfDefeatEnemy;
 	int m_iGoldenAgeValueFromKills;
+	int m_iFaithFromKills;
 	FAutoVariable<int, CvUnit> m_iTacticalAIPlotX;
 	FAutoVariable<int, CvUnit> m_iTacticalAIPlotY;
 	FAutoVariable<int, CvUnit> m_iGarrisonCityID;   // unused

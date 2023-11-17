@@ -96,6 +96,7 @@ CvPromotionEntry::CvPromotionEntry():
 	m_iExtraNavalMoves(0),
 	m_iHPHealedIfDefeatEnemy(0),
 	m_iGoldenAgeValueFromKills(0),
+	m_iFaithFromKills(0),
 	m_iExtraWithdrawal(0),
 	m_iEmbarkExtraVisibility(0),
 	m_iEmbarkDefenseModifier(0),
@@ -337,6 +338,7 @@ bool CvPromotionEntry::CacheResults(Database::Results& kResults, CvDatabaseUtili
 	m_iExtraNavalMoves = kResults.GetInt("ExtraNavalMovement");
 	m_iHPHealedIfDefeatEnemy = kResults.GetInt("HPHealedIfDestroyEnemy");
 	m_iGoldenAgeValueFromKills = kResults.GetInt("GoldenAgeValueFromKills");
+	m_iFaithFromKills = kResults.GetInt("FaithFromKills");
 	m_iExtraWithdrawal = kResults.GetInt("ExtraWithdrawal");
 	m_iEmbarkExtraVisibility = kResults.GetInt("EmbarkExtraVisibility");
 	m_iEmbarkDefenseModifier = kResults.GetInt("EmbarkDefenseModifier");
@@ -1172,6 +1174,13 @@ int CvPromotionEntry::GetHPHealedIfDefeatEnemy() const
 int CvPromotionEntry::GetGoldenAgeValueFromKills() const
 {
 	return m_iGoldenAgeValueFromKills;
+}
+
+
+/// Accessor: percent of defeated enemy strength awarded as faith
+int CvPromotionEntry::GetFaithFromKills() const
+{
+	return m_iFaithFromKills;
 }
 
 /// Accessor: maximum chance to withdraw before melee

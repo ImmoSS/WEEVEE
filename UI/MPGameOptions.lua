@@ -344,7 +344,7 @@ function UpdateGameOptionsDisplay(bUpdateOnly)
 	end
 	Controls.AllowSameturnBeliefsPull:GetButton():LocalizeAndSetText( AllowSameturnBeliefsStr );
 	Controls.AllowSameturnBeliefsPull:SetDisabled( not bCanEdit );
-	Controls.AllowSameturnBeliefsRoot:SetHide(PreGame.IsHotSeatGame());
+	-- Controls.AllowSameturnBeliefsRoot:SetHide(PreGame.IsHotSeatGame());
 
 	-- Update the options panel
 	RefreshGameOptions();

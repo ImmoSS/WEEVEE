@@ -707,6 +707,8 @@ public:
 	void incrementGreatEngineersCreated();
 	int getGreatMerchantsCreated() const;
 	void incrementGreatMerchantsCreated();
+	int getGreatPatronsCreated() const;
+	void incrementGreatPatronsCreated();
 	int getGreatProphetsCreated() const;
 	void incrementGreatProphetsCreated();
 	// GJS: end separation of great people
@@ -1861,6 +1863,7 @@ protected:
 	int m_iGreatScientistsCreated; // GJS
 	int m_iGreatEngineersCreated; // GJS
 	int m_iGreatMerchantsCreated; // GJS
+	int m_iGreatPatronsCreated; // Ashwin
 	int m_iGreatProphetsCreated; // GJS
 	int m_iMerchantsFromFaith;
 	int m_iScientistsFromFaith;

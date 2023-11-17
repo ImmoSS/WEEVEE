@@ -615,6 +615,13 @@ int CvTraitEntry::GetTradeBuildingModifier() const
 	return m_iTradeBuildingModifier;
 }
 
+// Kill yield cap for XML editing so no one has to yell at me to get it changed - Ashwin
+
+int CvTraitEntry::GetKillYieldCap() const
+{
+	return m_iKillYieldCap;
+}
+
 // CMP DLL Table inserts ~EAP
 
 TechTypes CvTraitEntry::GetFreeBuildingPrereqTech() const
@@ -1118,6 +1125,8 @@ bool CvTraitEntry::CacheResults(Database::Results& kResults, CvDatabaseUtility& 
 	m_iLandTradeRouteRangeBonus				= kResults.GetInt("LandTradeRouteRangeBonus");
 	m_iTradeReligionModifier				= kResults.GetInt("TradeReligionModifier");
 	m_iTradeBuildingModifier				= kResults.GetInt("TradeBuildingModifier");
+	// Ashwin: getting kill yield cap
+	m_iKillYieldCap							= kResults.GetInt("KillYieldCap");
 
 	const char* szTextVal = NULL;
 	szTextVal = kResults.GetText("FreeUnit");
@@ -1673,6 +1682,7 @@ void CvPlayerTraits::InitPlayerTraits()
 			m_iLandTradeRouteRangeBonus += trait->GetLandTradeRouteRangeBonus();
 			m_iTradeReligionModifier += trait->GetTradeReligionModifier();
 			m_iTradeBuildingModifier += trait->GetTradeBuildingModifier();
+			m_iKillYieldCap += trait->GetKillYieldCap();
 
 			if(trait->IsFightWellDamaged())
 			{
@@ -1817,12 +1827,14 @@ void CvPlayerTraits::InitPlayerTraits()
 #endif
 				{
 					int iChange = trait->GetSpecialistYieldChanges((SpecialistTypes)iSpecialistLoop, (YieldTypes)iYield);
-					if(iChange > 0)
+					// if(iChange > 0)
+					// Megawac: removing check so you can do negative specialist yields
+					if(true)
 					{
 						Firaxis::Array<int, NUM_YIELD_TYPES> yields = m_ppaaiSpecialistYieldChange[iSpecialistLoop];
 						yields[iYield] = (m_ppaaiSpecialistYieldChange[iSpecialistLoop][iYield] + iChange);
 						m_ppaaiSpecialistYieldChange[iSpecialistLoop] = yields;
-					}
+					} 
 				}
 			}
 			CvAssert(GC.getNumTerrainInfos() <= NUM_TERRAIN_TYPES);
@@ -1991,6 +2003,7 @@ void CvPlayerTraits::Reset()
 	m_iLandTradeRouteRangeBonus = 0;
 	m_iTradeReligionModifier = 0;
 	m_iTradeBuildingModifier = 0;
+	m_iKillYieldCap = 0;
 
 	m_bFightWellDamaged = false;
 	m_bMoveFriendlyWoodsAsRoad = false;
@@ -3183,6 +3196,8 @@ void CvPlayerTraits::Read(FDataStream& kStream)
 		m_iTradeBuildingModifier = 0;
 	}
 
+	kStream >> m_iKillYieldCap;
+
 	kStream >> m_bFightWellDamaged;
 	kStream >> m_bMoveFriendlyWoodsAsRoad;
 	kStream >> m_bFasterAlongRiver;
@@ -3461,6 +3476,7 @@ void CvPlayerTraits::Write(FDataStream& kStream)
 	kStream << m_iLandTradeRouteRangeBonus;
 	kStream << m_iTradeReligionModifier;
 	kStream << m_iTradeBuildingModifier;
+	kStream << m_iKillYieldCap;
 
 	kStream << m_bFightWellDamaged;
 	kStream << m_bMoveFriendlyWoodsAsRoad;

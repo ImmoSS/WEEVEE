@@ -290,6 +290,58 @@ public:
 	int GetNumUnitsSuppliedByHandicap() const;
 	int GetNumUnitsSuppliedByCities() const;
 	int GetNumUnitsSuppliedByPopulation() const;
+#ifdef ENHANCED_GRAPHS
+	int GetNumTrainedUnits() const;
+	void ChangeNumTrainedUnits(int iChange);
+	int GetNumKilledUnits() const;
+	void ChangeNumKilledUnits(int iChange);
+	int GetNumLostUnits() const;
+	void ChangeNumLostUnits(int iChange);
+	int GetUnitsDamageDealt() const;
+	void ChangeUnitsDamageDealt(int iChange);
+	int GetUnitsDamageTaken() const;
+	void ChangeUnitsDamageTaken(int iChange);
+	int GetCitiesDamageDealt() const;
+	void ChangeCitiesDamageDealt(int iChange);
+	int GetCitiesDamageTaken() const;
+	void ChangeCitiesDamageTaken(int iChange);
+	int GetNumScientistsTotal() const;
+	void ChangeNumScientistsTotal(int iChange);
+	int GetNumEngineersTotal() const;
+	void ChangeNumEngineersTotal(int iChange);
+	int GetNumMerchantsTotal() const;
+	void ChangeNumMerchantsTotal(int iChange);
+	int GetNumWritersTotal() const;
+	void ChangeNumWritersTotal(int iChange);
+	int GetNumAristsTotal() const;
+	void ChangeNumArtistsTotal(int iChange);
+	int GetNumMusiciansTotal() const;
+	void ChangeNumMusiciansTotal(int iChange);
+	int GetNumGeneralsTotal() const;
+	void ChangeNumGeneralsTotal(int iChange);
+	int GetNumAdmiralsTotal() const;
+	void ChangeNumAdmiralsTotal(int iChange);
+	int GetNumProphetsTotal() const;
+	void ChangeNumProphetsTotal(int iChange);
+	int GetProductionGoldFromWonders() const;
+	void ChangeProductionGoldFromWonders(int iChange);
+	int GetNumChops() const;
+	void ChangeNumChops(int iChange);
+	int GetNumTimesOpenedDemographics() const;
+	void ChangeNumTimesOpenedDemographics(int Change);
+	bool GetMayaBoostScientist() const;
+	void SetMayaBoostScientist(bool bValue);
+	bool GetMayaBoostEngineers() const;
+	void SetMayaBoostEngineers(bool bValue);
+	bool GetMayaBoostMerchants() const;
+	void SetMayaBoostMerchants(bool bValue);
+	bool GetMayaBoostWriters() const;
+	void SetMayaBoostWriters(bool bValue);
+	bool GetMayaBoostArtists() const;
+	void SetMayaBoostArtists(bool bValue);
+	bool GetMayaBoostMusicians() const;
+	void SetMayaBoostMusicians(bool bValue);
+#endif
 
 	int GetNumUnitsOutOfSupply() const;
 
@@ -590,6 +642,10 @@ public:
 	void ChangeEspionageModifier(int iChange);
 	int GetStartingSpyRank() const;
 	void ChangeStartingSpyRank(int iChange);
+#ifdef ENHANCED_GRAPHS
+	int GetNumStolenScience() const;
+	void ChangeNumStolenScience(int iChange);
+#endif
 	// END Espionage
 
 	int GetExtraLeagueVotes() const;
@@ -1833,6 +1889,34 @@ protected:
 	int m_iHappinessPerXPolicies;
 	int m_iEspionageModifier;
 	int m_iSpyStartingRank;
+#ifdef ENHANCED_GRAPHS
+	int m_iNumStolenScience;
+	int m_iNumTrainedUnits;
+	int m_iNumKilledUnits;
+	int m_iNumLostUnits;
+	int m_iUnitsDamageDealt;
+	int m_iUnitsDamageTaken;
+	int m_iCitiesDamageDealt;
+	int m_iCitiesDamageTaken;
+	int m_iNumScientistsTotal;
+	int m_iNumEngineersTotal;
+	int m_iNumMerchantsTotal;
+	int m_iNumWritersTotal;
+	int m_iNumArtistsTotal;
+	int m_iNumMusiciansTotal;
+	int m_iNumGeneralsTotal;
+	int m_iNumAdmiralsTotal;
+	int m_iNumProphetsTotal;
+	int m_iProductionGoldFromWonders;
+	int m_iNumChops;
+	int m_iNumTimesOpenedDemographics;
+	int m_bMayaBoostScientist;
+	int m_bMayaBoostEngineers;
+	int m_bMayaBoostMerchants;
+	int m_bMayaBoostWriters;
+	int m_bMayaBoostArtists;
+	int m_bMayaBoostMusicians;
+#endif
 	int m_iExtraLeagueVotes;
 	FAutoVariable<int, CvPlayer> m_iAdvancedStartPoints;
 	FAutoVariable<int, CvPlayer> m_iAttackBonusTurns;

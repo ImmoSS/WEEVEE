@@ -913,4 +913,6 @@
 #define AUTOSAVE_END_OF_TURN
 ///
 #define ALLOW_SAMETURN_BELIEFS
+///
+#define ENHANCED_GRAPHS
 #endif

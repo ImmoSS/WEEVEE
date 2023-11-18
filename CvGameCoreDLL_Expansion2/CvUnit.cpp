@@ -1431,6 +1431,14 @@ void CvUnit::kill(bool bDelay, PlayerTypes ePlayer /*= NO_PLAYER*/)
 		}
 	}
 
+#ifdef ENHANCED_GRAPHS
+	if (getUnitCombatType() != NO_UNITCOMBAT && ePlayer != NO_PLAYER && ePlayer != BARBARIAN_PLAYER)
+	{
+		GET_PLAYER(ePlayer).ChangeNumKilledUnits(1);
+		GET_PLAYER(getOwner()).ChangeNumLostUnits(1);
+	}
+#endif
+
 	auto_ptr<ICvUnit1> pDllThisUnit = GC.WrapUnitPointer(this);
 
 	if(IsSelected() && !bDelay)
@@ -16101,6 +16109,13 @@ int CvUnit::changeDamage(int iChange, PlayerTypes ePlayer, float fAdditionalText
 	VALIDATE_OBJECT;
 #ifdef DEL_RANGED_COUNTERATTACKS
 	if (iChange != 0)
+#endif
+#ifdef ENHANCED_GRAPHS
+	if (ePlayer != NO_PLAYER && getUnitCombatType() != NO_UNITCOMBAT && iChange > 0)
+	{
+		GET_PLAYER(ePlayer).ChangeUnitsDamageDealt(iChange);
+		GET_PLAYER(getOwner()).ChangeUnitsDamageTaken(iChange);
+	}
 #endif
 	return setDamage((getDamage() + iChange), ePlayer, fAdditionalTextDelay, pAppendText);
 #ifdef DEL_RANGED_COUNTERATTACKS

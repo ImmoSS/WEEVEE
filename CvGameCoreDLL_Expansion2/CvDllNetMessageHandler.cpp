@@ -775,13 +775,20 @@ void CvDllNetMessageHandler::ResponseGiftUnit(PlayerTypes ePlayer, PlayerTypes e
 	}
 	else
 #endif
-#if defined(TURN_TIMER_RESET_BUTTON) || defined(TURN_TIMER_PAUSE_BUTTON)
+#ifdef ENHANCED_GRAPHS
+	// -8 -- increment num times opened demographics
+	if (iUnitID == -8) {
+		GET_PLAYER(ePlayer).ChangeNumTimesOpenedDemographics(1);
+	}
+	else
+#endif
+#if defined(TURN_TIMER_RESET_BUTTON) || defined(TURN_TIMER_PAUSE_BUTTON) || defined(ENHANCED_GRAPHS)
 	{
 #endif
 		CvUnit* pkUnit = GET_PLAYER(ePlayer).getUnit(iUnitID);
 		GET_PLAYER(eMinor).DoDistanceGift(ePlayer, pkUnit);
 
-#if defined(TURN_TIMER_RESET_BUTTON) || defined(TURN_TIMER_PAUSE_BUTTON)
+#if defined(TURN_TIMER_RESET_BUTTON) || defined(TURN_TIMER_PAUSE_BUTTON) || defined(ENHANCED_GRAPHS)
 	}
 #endif
 }
@@ -1007,7 +1014,11 @@ void CvDllNetMessageHandler::ResponseMayaBonusChoice(PlayerTypes ePlayer, UnitTy
 	if(pCity)
 #endif
 	{
+#ifdef ENHANCED_GRAPHS
+		pCity->GetCityCitizens()->DoSpawnGreatPerson(eGreatPersonUnit, true, false, true);
+#else
 		pCity->GetCityCitizens()->DoSpawnGreatPerson(eGreatPersonUnit, true, false);
+#endif
 	}
 	kPlayer.ChangeNumMayaBoosts(-1);
 	kPlayer.GetPlayerTraits()->SetUnitBaktun(eGreatPersonUnit);

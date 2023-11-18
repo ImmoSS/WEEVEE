@@ -1030,6 +1030,9 @@ protected:
 	// Warmongering
 	static int lGetWarmongerPreviewString(lua_State* L);
 	static int lGetLiberationPreviewString(lua_State* L);
+#ifdef ENHANCED_GRAPHS
+	static int lAddReplayOpenedDemographics(lua_State* L);
+#endif
 };
 
 #endif //CVLUAPLAYER_H

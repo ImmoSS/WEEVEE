@@ -9481,6 +9481,9 @@ bool CvPlot::changeBuildProgress(BuildTypes eBuild, int iChange, PlayerTypes ePl
 
 					if(iProduction > 0)
 					{
+#ifdef ENHANCED_GRAPHS
+						GET_PLAYER(pCity->getOwner()).ChangeNumChops(iProduction);
+#endif
 						pCity->changeFeatureProduction(iProduction);
 						if(pCity->getOwner() == GC.getGame().getActivePlayer())
 						{

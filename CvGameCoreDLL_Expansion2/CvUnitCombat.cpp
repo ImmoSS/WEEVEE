@@ -504,6 +504,16 @@ void CvUnitCombat::ResolveMeleeCombat(const CvCombatInfo& kCombatInfo, uint uiPa
 		if(pkAttacker->isSuicide())
 		{
 			pkAttacker->setCombatUnit(NULL);	// Must clear this if doing a delayed kill, should this be part of the kill method?
+#ifdef ENHANCED_GRAPHS
+			if (pkAttacker->getUnitCombatType() != NO_UNITCOMBAT)
+			{
+				if (pkDefender->getOwner() != NO_PLAYER)
+				{
+					GET_PLAYER(pkDefender->getOwner()).ChangeNumKilledUnits(1);
+				}
+				GET_PLAYER(pkAttacker->getOwner()).ChangeNumLostUnits(1);
+			}
+#endif
 			pkAttacker->kill(true);
 		}
 		else
@@ -1107,6 +1117,10 @@ void CvUnitCombat::ResolveRangedUnitVsCombat(const CvCombatInfo& kCombatInfo, ui
 				{
 					bBarbarian = pCity->isBarbarian();
 					pCity->changeDamage(iDamage);
+#ifdef ENHANCED_GRAPHS
+					GET_PLAYER(pCity->getOwner()).ChangeCitiesDamageTaken(iDamage);
+					GET_PLAYER(pkAttacker->getOwner()).ChangeCitiesDamageDealt(iDamage);
+#endif
 
 #ifdef DEL_RANGED_COUNTERATTACKS
 					pkAttacker->changeDamage(iDamageToAttacker, pCity->getOwner());
@@ -1378,6 +1392,10 @@ void CvUnitCombat::ResolveCityMeleeCombat(const CvCombatInfo& kCombatInfo, uint 
 	{
 		pkAttacker->changeDamage(iDefenderDamageInflicted, pkDefender->getOwner());
 		pkDefender->changeDamage(iAttackerDamageInflicted);
+#ifdef ENHANCED_GRAPHS
+		GET_PLAYER(pkDefender->getOwner()).ChangeCitiesDamageTaken(iAttackerDamageInflicted);
+		GET_PLAYER(pkAttacker->getOwner()).ChangeCitiesDamageDealt(iAttackerDamageInflicted);
+#endif
 
 		pkAttacker->changeExperience(kCombatInfo.getExperience(BATTLE_UNIT_ATTACKER),
 		                             kCombatInfo.getMaxExperienceAllowed(BATTLE_UNIT_ATTACKER),
@@ -1401,6 +1419,16 @@ void CvUnitCombat::ResolveCityMeleeCombat(const CvCombatInfo& kCombatInfo, uint 
 		if(pkAttacker->isSuicide())
 		{
 			pkAttacker->setCombatUnit(NULL);	// Must clear this if doing a delayed kill, should this be part of the kill method?
+#ifdef ENHANCED_GRAPHS
+			if (pkAttacker->getUnitCombatType() != NO_UNITCOMBAT)
+			{
+				if (pkDefender->getOwner() != NO_PLAYER)
+				{
+					GET_PLAYER(pkDefender->getOwner()).ChangeNumKilledUnits(1);
+				}
+				GET_PLAYER(pkAttacker->getOwner()).ChangeNumLostUnits(1);
+			}
+#endif
 			pkAttacker->kill(true);
 		}
 	}
@@ -1439,6 +1467,16 @@ void CvUnitCombat::ResolveCityMeleeCombat(const CvCombatInfo& kCombatInfo, uint 
 
 			// Barb goes away after ransom
 			pkAttacker->kill(true, NO_PLAYER);
+#ifdef ENHANCED_GRAPHS
+			if (pkAttacker->getUnitCombatType() != NO_UNITCOMBAT)
+			{
+				if (pkDefender->getOwner() != NO_PLAYER)
+				{
+					GET_PLAYER(pkDefender->getOwner()).ChangeNumKilledUnits(1);
+				}
+				GET_PLAYER(pkAttacker->getOwner()).ChangeNumLostUnits(1);
+			}
+#endif
 
 			// Treat this as a conquest
 			bCityConquered = true;
@@ -1879,6 +1917,10 @@ void CvUnitCombat::ResolveAirUnitVsCombat(const CvCombatInfo& kCombatInfo, uint 
 				if(pkAttacker)
 				{
 					pCity->changeDamage(iAttackerDamageInflicted);
+#ifdef ENHANCED_GRAPHS
+					GET_PLAYER(pCity->getOwner()).ChangeCitiesDamageTaken(iAttackerDamageInflicted);
+					GET_PLAYER(pkAttacker->getOwner()).ChangeCitiesDamageDealt(iAttackerDamageInflicted);
+#endif
 					pkAttacker->changeDamage(iDefenderDamageInflicted, pCity->getOwner());
 
 					//		iUnitDamage = std::max(pCity->getDamage(), pCity->getDamage() + iDamage);
@@ -1913,6 +1955,28 @@ void CvUnitCombat::ResolveAirUnitVsCombat(const CvCombatInfo& kCombatInfo, uint 
 		if(pkAttacker->isSuicide())
 		{
 			pkAttacker->setCombatUnit(NULL);	// Must clear this if doing a delayed kill, should this be part of the kill method?
+#ifdef ENHANCED_GRAPHS
+			if (pkAttacker->getUnitCombatType() != NO_UNITCOMBAT)
+			{
+				if (!pkTargetPlot->isCity())
+				{
+					CvUnit* pkDefender = kCombatInfo.getUnit(BATTLE_UNIT_DEFENDER);
+					if (pkDefender->getOwner() != NO_PLAYER)
+					{
+						GET_PLAYER(pkDefender->getOwner()).ChangeNumKilledUnits(1);
+					}
+				}
+				else
+				{
+					CvCity* pCity = pkTargetPlot->getPlotCity();
+					if (pCity->getOwner() != NO_PLAYER)
+					{
+						GET_PLAYER(pCity->getOwner()).ChangeNumKilledUnits(1);
+					}
+				}
+				GET_PLAYER(pkAttacker->getOwner()).ChangeNumLostUnits(1);
+			}
+#endif
 			pkAttacker->kill(true);
 		}
 		else
@@ -2593,6 +2657,10 @@ uint CvUnitCombat::ApplyNuclearExplosionDamage(const CvCombatMemberEntry* pkDama
 					pkCity->changePopulation(-(std::min((pkCity->getPopulation() - 1), iNukedPopulation)));
 
 					// Add damage to the city
+#ifdef ENHANCED_GRAPHS
+					GET_PLAYER(pkCity->getOwner()).ChangeCitiesDamageTaken(kEntry.GetFinalDamage() - pkCity->getDamage());
+					GET_PLAYER(pkAttacker->getOwner()).ChangeCitiesDamageDealt(kEntry.GetFinalDamage() - pkCity->getDamage());
+#endif
 					pkCity->setDamage(kEntry.GetFinalDamage());
 
 #ifdef AUI_WARNING_FIXES
@@ -2802,6 +2870,16 @@ void CvUnitCombat::ResolveNuclearCombat(const CvCombatInfo& kCombatInfo, uint ui
 		{
 			pkAttacker->setCombatUnit(NULL);	// Must clear this if doing a delayed kill, should this be part of the kill method?
 			pkAttacker->setAttackPlot(NULL, false);
+/*#ifdef ENHANCED_GRAPHS
+			if (pkAttacker->getUnitCombatType() != NO_UNITCOMBAT)
+			{
+				if (pkDefender->getOwner() != NO_PLAYER)
+				{
+					GET_PLAYER(pkDefender->getOwner()).ChangeNumKilledUnits(1);
+				}
+				GET_PLAYER(pkAttacker->getOwner()).ChangeNumLostUnits(1);
+			}
+#endif*/
 			pkAttacker->kill(true);
 		}
 		else
